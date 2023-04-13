@@ -5,6 +5,7 @@ import pygame
 from scripts.events import events_class
 from scripts.utility import get_living_clan_cat_count, get_text_box_theme, scale
 from scripts.game_structure.image_button import IDImageButton, UIImageButton
+from scripts.game_structure.ui_button import UIButton
 from scripts.game_structure.game_essentials import game, screen_x, screen_y, MANAGER
 from ..cat.cats import Cat
 from ..game_structure import image_cache
@@ -447,7 +448,7 @@ class EventsScreen(Screens):
         if game.clan.age != 1:
             self.clan_age.set_text(f'Clan age: {game.clan.age} moons')
 
-        self.timeskip_button = UIImageButton(scale(pygame.Rect((620, 436), (360, 60))), "", object_id="#timeskip_button"
+        self.timeskip_button = UIButton(scale(pygame.Rect((620, 436), (360, 60))), "", object_id="#timeskip_button"
                                              , manager=MANAGER)
 
         # commenting out for now as there seems to be a consensus that it isn't needed anymore?

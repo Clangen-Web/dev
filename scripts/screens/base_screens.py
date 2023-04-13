@@ -6,6 +6,7 @@ from scripts.clan import Clan
 from scripts.game_structure.game_essentials import game, screen, screen_x, screen_y, MANAGER
 from scripts.game_structure import image_cache
 from scripts.game_structure.image_button import UIImageButton
+from scripts.game_structure.ui_button import UIButton
 import pygame_gui
 from scripts.game_structure.windows import SaveCheck
 
@@ -17,49 +18,49 @@ class Screens():
 
     # menu buttons are used very often, so they are generated here.
     menu_buttons = {
-        "events_screen": UIImageButton(
+        "events_screen": UIButton(
             scale(pygame.Rect((492, 120), (164, 60))),
             "",
             visible=False,
             manager=MANAGER,
             object_id="#events_menu_button"
         ),
-        "clan_screen": UIImageButton(
+        "clan_screen": UIButton(
             scale(pygame.Rect((656, 120), (116, 60))),
             "",
             visible=False,
             manager=MANAGER,
             object_id="#clan_menu_button"),
-        "starclan_screen": UIImageButton(
+        "starclan_screen": UIButton(
             scale(pygame.Rect((772, 120), (176, 60))),
             "",
             visible=False,
             object_id="#starclan_menu_button"),
-        "patrol_screen": UIImageButton(
+        "patrol_screen": UIButton(
             scale(pygame.Rect((948, 120), (160, 60))),
             "",
             visible=False,
             manager=MANAGER,
             object_id="#patrol_menu_button"),
-        "main_menu": UIImageButton(
+        "main_menu": UIButton(
             scale(pygame.Rect((50, 50), (306, 60))),
             "",
             visible=False,
             manager=MANAGER,
             object_id="#main_menu_button"),
-        "list_screen": UIImageButton(
+        "list_screen": UIButton(
             scale(pygame.Rect((1352, 120), (198, 60))),
             "",
             visible=False,
             manager=MANAGER,
             object_id="#list_button"),
-        "allegiances": UIImageButton(
+        "allegiances": UIButton(
             scale(pygame.Rect((1314, 50), (236, 60))),
             "",
             visible=False,
             manager=MANAGER,
             object_id="#allegiances_button"),
-        "stats": UIImageButton(
+        "stats": UIButton(
             scale(pygame.Rect((50, 120), (162, 60))),
             "",
             visible=False,
@@ -202,7 +203,7 @@ class Screens():
         if game.settings["moons and seasons"]:
             self.menu_buttons['stats'].dynamic_dimensions_orig_top_left = scale_dimentions((1388, 190))
             self.menu_buttons['stats']._rect = scale(pygame.Rect(1388, 190, 162, 60))
-            self.menu_buttons['stats'].blit_data[1] = scale(pygame.Rect(1388, 190, 162, 60))
+            self.menu_buttons['stats'].image.blit_data[1] = scale(pygame.Rect(1388, 190, 162, 60))
             self.menu_buttons['stats'].rebuild()
             self.menu_buttons['moons_n_seasons_arrow'].kill()
             self.menu_buttons['moons_n_seasons'].kill()
@@ -218,7 +219,7 @@ class Screens():
             self.menu_buttons['moons_n_seasons_arrow'].hide()
             self.menu_buttons['stats'].dynamic_dimensions_orig_top_left = scale_dimentions((50, 120))
             self.menu_buttons['stats']._rect = scale(pygame.Rect(50, 120, 162, 60))
-            self.menu_buttons['stats'].blit_data[1] = scale(pygame.Rect(50, 120, 162, 60))
+            self.menu_buttons['stats'].image.blit_data[1] = scale(pygame.Rect(50, 120, 162, 60))
             self.menu_buttons['stats'].rebuild()
     
     # open moons and seasons UI (AKA wide version)    

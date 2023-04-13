@@ -25,6 +25,7 @@ from .base_screens import Screens
 from requests.exceptions import ConnectionError, HTTPError
 from scripts.cat.cats import Cat
 from scripts.game_structure.image_button import UIImageButton
+from scripts.game_structure.ui_button import UIButton
 from scripts.utility import get_text_box_theme, scale, quit  # pylint: disable=redefined-builtin
 import pygame_gui
 from scripts.game_structure.game_essentials import game, screen, screen_x, screen_y, MANAGER
@@ -67,10 +68,10 @@ class StartScreen(Screens):
                 subprocess.Popen(['xdg-open', event.link_target])
         if event.type == pygame_gui.UI_BUTTON_START_PRESS:
             screens = {
-                self.continue_button: 'clan screen',
-                self.switch_clan_button: 'switch clan screen',
-                self.new_clan_button: 'make clan screen',
-                self.settings_button: 'settings screen',
+                self.continue_button.button: 'clan screen',
+                self.switch_clan_button.button: 'switch clan screen',
+                self.new_clan_button.button: 'make clan screen',
+                self.settings_button.button: 'settings screen',
             }
             if event.ui_element in screens:
                 self.change_screen(screens[event.ui_element])
@@ -151,27 +152,27 @@ class StartScreen(Screens):
         self.hide_menu_buttons()
         # Create buttons
 
-        self.continue_button = UIImageButton(scale(
+        self.continue_button = UIButton(scale(
             pygame.Rect((140, 620), (384, 70))),
             "",
             object_id="#continue_button",
             manager=MANAGER)
-        self.switch_clan_button = UIImageButton(
+        self.switch_clan_button = UIButton(
             scale(pygame.Rect((140, 710), (384, 70))),
             "",
             object_id="#switch_clan_button",
             manager=MANAGER)
-        self.new_clan_button = UIImageButton(scale(
+        self.new_clan_button = UIButton(scale(
             pygame.Rect((140, 800), (384, 70))),
             "",
             object_id="#new_clan_button",
             manager=MANAGER)
-        self.settings_button = UIImageButton(scale(
+        self.settings_button = UIButton(scale(
             pygame.Rect((140, 890), (384, 70))),
             "",
             object_id="#settings_button",
             manager=MANAGER)
-        self.quit = UIImageButton(scale(pygame.Rect((140, 980), (384, 70))),
+        self.quit = UIButton(scale(pygame.Rect((140, 980), (384, 70))),
                                   "",
                                   object_id="#quit_button",
                                   manager=MANAGER)
@@ -219,7 +220,7 @@ class StartScreen(Screens):
             manager=MANAGER
         )
 
-        self.open_data_directory_button = UIImageButton(
+        self.open_data_directory_button = UIButton(
             scale(pygame.Rect((1040, 1020), (320, 60))),
             "",
             object_id="#open_data_directory_button",
@@ -229,7 +230,8 @@ class StartScreen(Screens):
                           "This is where save files "
                           "and logs are stored.")
 
-        self.closebtn = UIImageButton(
+
+        self.closebtn = UIButton(
             scale(pygame.Rect((1386, 430), (44, 44))),
             "",
             object_id="#exit_window_button",
@@ -241,8 +243,8 @@ class StartScreen(Screens):
         self.open_data_directory_button.hide()
         self.closebtn.hide()
 
-        self.update_button = UIImageButton(scale(pygame.Rect((1154, 50), (382.5, 75))), "",
-                                           object_id="#update_button", manager=MANAGER)
+        self.update_button = UIButton(scale(pygame.Rect((1154, 50), (382.5, 75))), "",
+                                             object_id="#update_button", manager=MANAGER)
         self.update_button.visible = 0
 
         try:
@@ -410,7 +412,7 @@ class SwitchClanScreen(Screens):
             pygame.image.load(
                 "resources/images/clan_saves_frame.png").convert_alpha(),
             (440 / 1600 * screen_x, 750 / 1400 * screen_y))
-        self.main_menu = UIImageButton(scale(pygame.Rect((50, 50), (306, 60))),
+        self.main_menu = UIButton(scale(pygame.Rect((50, 50), (306, 60))),
                                        "",
                                        object_id="#main_menu_button",
                                        manager=MANAGER)
@@ -449,7 +451,7 @@ class SwitchClanScreen(Screens):
                     object_id="#saved_clan",
                     manager=MANAGER))
             self.delete_buttons[-1].append(
-                UIImageButton(scale(pygame.Rect((940, y_pos + 17), (44, 44))),
+                UIButton(scale(pygame.Rect((940, y_pos + 17), (44, 44))),
                               "",
                               object_id="#exit_window_button",
                               manager=MANAGER,
@@ -464,12 +466,12 @@ class SwitchClanScreen(Screens):
                 i = 0
                 y_pos = 378
 
-        self.next_page_button = UIImageButton(scale(
+        self.next_page_button = UIButton(scale(
             pygame.Rect((912, 1080), (68, 68))),
             "",
             object_id="#arrow_right_button",
             manager=MANAGER)
-        self.previous_page_button = UIImageButton(
+        self.previous_page_button = UIButton(
             scale(pygame.Rect((620, 1080), (68, 68))),
             "",
             object_id="#arrow_left_button",
@@ -691,27 +693,27 @@ class SettingsScreen(Screens):
         """
         self.settings_changed = False
 
-        self.general_settings_button = UIImageButton(
+        self.general_settings_button = UIButton(
             scale(pygame.Rect((200, 200), (300, 60))),
             "",
             object_id="#general_settings_button",
             manager=MANAGER)
-        self.relation_settings_button = UIImageButton(
+        self.relation_settings_button = UIButton(
             scale(pygame.Rect((500, 200), (300, 60))),
             "",
             object_id="#relation_settings_button",
             manager=MANAGER)
-        self.info_button = UIImageButton(scale(
+        self.info_button = UIButton(scale(
             pygame.Rect((800, 200), (300, 60))),
             "",
             object_id="#info_settings_button",
             manager=MANAGER)
-        self.language_button = UIImageButton(scale(
+        self.language_button = UIButton(scale(
             pygame.Rect((1100, 200), (300, 60))),
             "",
             object_id="#lang_settings_button",
             manager=MANAGER)
-        self.save_settings_button = UIImageButton(
+        self.save_settings_button = UIButton(
             scale(pygame.Rect((654, 1100), (292, 60))),
             "",
             object_id="#save_settings_button",
@@ -726,7 +728,7 @@ class SettingsScreen(Screens):
                           "When you reopen, fullscreen"
                           " will be toggled. ")
 
-        self.open_data_directory_button = UIImageButton(
+        self.open_data_directory_button = UIButton(
             scale(pygame.Rect((50, 1290), (356, 60))),
             "",
             object_id="#open_data_directory_button",
@@ -739,7 +741,7 @@ class SettingsScreen(Screens):
             self.open_data_directory_button.hide()
 
         self.update_save_button()
-        self.main_menu_button = UIImageButton(scale(
+        self.main_menu_button = UIButton(scale(
             pygame.Rect((50, 50), (305, 60))),
             "",
             object_id="#main_menu_button",
@@ -937,12 +939,12 @@ class SettingsScreen(Screens):
                 "",
                 object_id="#english_lang_button",
                 manager=MANAGER)
-            self.checkboxes['spanish'] = UIImageButton(
+            self.checkboxes['spanish'] = UIButton(
                 scale(pygame.Rect((620, 502), (360, 74))),
                 "",
                 object_id="#spanish_lang_button",
                 manager=MANAGER)
-            self.checkboxes['german'] = UIImageButton(
+            self.checkboxes['german'] = UIButton(
                 scale(pygame.Rect((620, 576), (360, 74))),
                 "",
                 object_id="#german_lang_button",
