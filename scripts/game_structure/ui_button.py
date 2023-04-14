@@ -150,6 +150,24 @@ class _Symbol():
         _Symbol._custom["{MEDIATION}"] = _Symbol.load("resources/images/symbols/mediation.png")
     
     @staticmethod
+    def __populate() -> None:
+        _Symbol._custom["{DICE}"] = _Symbol.generate_surface((16, 16))
+        _Symbol._custom["{ARROW_LEFT_SHORT}"] = _Symbol.generate_surface((16, 16))
+        _Symbol._custom["{ARROW_LEFT_MED}"] = _Symbol.generate_surface((16, 16))
+        _Symbol._custom["{ARROW_RIGHT_MED}"] = _Symbol.generate_surface((16, 16))
+        _Symbol._custom["{PATROL_CLAW}"] = _Symbol.generate_surface((16, 16))
+        _Symbol._custom["{PATROL_PAW}"] =_Symbol.generate_surface((16, 16))
+        _Symbol._custom["{PATROL_MOUSE}"] = _Symbol.generate_surface((16, 16))
+        _Symbol._custom["{PATROL_HERB}"] = _Symbol.generate_surface((16, 16))
+        _Symbol._custom["{YOUR_CLAN}"] = _Symbol.generate_surface((16, 16))
+        _Symbol._custom["{OUTSIDE_CLAN}"] = _Symbol.generate_surface((16, 16))
+        _Symbol._custom["{STARCLAN}"] = _Symbol.generate_surface((16, 16))
+        _Symbol._custom["{UNKNOWN_RESIDENCE}"] = _Symbol.generate_surface((16, 16))
+        _Symbol._custom["{DARK_FOREST}"] = _Symbol.generate_surface((16, 16))
+        _Symbol._custom["{LEADER_CEREMONY}"] = _Symbol.generate_surface((16, 16))
+        _Symbol._custom["{MEDIATION}"] =_Symbol.generate_surface((16, 16))
+
+    @staticmethod
     def load(image_path: str) -> pygame.Surface:
         """Loads an image and replaces (0, 0, 0) with the desired color
 
@@ -164,6 +182,19 @@ class _Symbol():
         pixel_array.replace((0, 0, 0, 255), _Symbol._color)
         pixel_array.close()
         del pixel_array
+        return surface
+    
+    @staticmethod
+    def generate_surface(size: tuple) -> pygame.Surface:
+        """Generates a temporary surface, to be used when loading without symbols
+
+        Args:
+            size (tuple): Size of surface, (width, height)
+
+        Returns:
+            pygame.Surface
+        """
+        surface = pygame.Surface(size)
         return surface
 
 class _Style():
@@ -461,7 +492,7 @@ class CatButton(pygame_gui.elements.UIButton):
         self.internal.image.set_image(pygame.transform.scale(sprite, self.relative_rect.size))
         super().on_unhovered()
 
-_Symbol.__init__()
+_Symbol.__populate()
 
 class RectButton():
     """TODO: document"""
