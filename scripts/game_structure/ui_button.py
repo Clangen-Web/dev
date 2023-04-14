@@ -100,7 +100,7 @@ class _Language():
     dict_en = ujson.load(open("languages/english/buttons.json", "r", encoding="utf-8"))
     dict_pt = ujson.load(open("languages/portuguese/buttons.json", "r", encoding="utf-8"))
     @staticmethod
-    def check(object_id: str) -> str:
+    def check(object_id: Union[str, None]) -> str:
         """Checks if the object_id is in the dictionary, and returns the appropriate string (if found)
 
         Args:
@@ -110,7 +110,7 @@ class _Language():
             str: The found language string
             default: ''
         """
-        if object_id == None:
+        if object_id is None:
             raise ValueError("object_id cannot be None")
         if _Language.LANGUAGE == "en":
             search = _Language.dict_en.get(object_id)
@@ -150,7 +150,7 @@ class _Symbol():
         _Symbol._custom["{MEDIATION}"] = _Symbol.load("resources/images/symbols/mediation.png")
     
     @staticmethod
-    def __populate() -> None:
+    def _populate() -> None:
         _Symbol._custom["{DICE}"] = _Symbol.generate_surface((16, 16))
         _Symbol._custom["{ARROW_LEFT_SHORT}"] = _Symbol.generate_surface((16, 16))
         _Symbol._custom["{ARROW_LEFT_MED}"] = _Symbol.generate_surface((16, 16))
@@ -492,7 +492,7 @@ class CatButton(pygame_gui.elements.UIButton):
         self.internal.image.set_image(pygame.transform.scale(sprite, self.relative_rect.size))
         super().on_unhovered()
 
-_Symbol.__populate()
+_Symbol._populate()
 
 class RectButton():
     """TODO: document"""
@@ -566,6 +566,8 @@ class RectButton():
             if not rotate:
                 length += 1
                 odd = True
+        if length <= 0:
+            length = 0
         surface = pygame.Surface((length, 6), pygame.SRCALPHA)
         surface = surface.convert_alpha()
         # outline
