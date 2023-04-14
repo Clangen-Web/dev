@@ -1301,7 +1301,7 @@
         "font":
         {
         "name": "notosans",
-        "size": "30"
+        "size": "20"
         },
         "misc":
         {
@@ -2041,7 +2041,7 @@
         "font":
         {
             "name": "notosans",
-            "size": "26"
+            "size": "16"
         },
         "misc":
         {

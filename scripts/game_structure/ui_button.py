@@ -461,18 +461,6 @@ class CatButton(pygame_gui.elements.UIButton):
         self.internal.image.set_image(pygame.transform.scale(sprite, self.relative_rect.size))
         super().on_unhovered()
 
-    def return_cat_id(self):
-        """TODO: document"""
-        return self.cat_id
-
-    def return_cat_object(self):
-        """TODO: document"""
-        return self.cat_object
-
-    def set_id(self, id): # pylint: disable=redefined-builtin
-        """TODO: document"""
-        self.cat_id = id
-
 _Symbol.__init__()
 
 class RectButton():
