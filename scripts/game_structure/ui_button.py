@@ -71,6 +71,7 @@ import pygame_gui
 import ujson
 import warnings
 import re
+import i18n
 from typing import Union
 import scripts.game_structure.image_button
 
@@ -81,9 +82,15 @@ DEBUG = False
 FONT = pygame.font.Font('resources/fonts/clangen.ttf', 16)
 # COLOR = (239, 229, 206)
 COLOR = (239, 229, 0)
+PLATFORM = None
+
 class _Language():
     """Class for rendering button text in other languages, from languages/.*/buttons.json"""
-    LANGUAGE = "en"
+    LANGUAGE = "pt-br"
+    i18n.load_path.append('languages/buttons')
+    i18n.set('file_format', 'json')
+    i18n.set('locale', LANGUAGE)
+    # global dictionary for symbol lookup
     dict_global = {
         "#cat_tab_3_blank_button": "",
         "#cat_tab_4_blank_button": "",
@@ -97,8 +104,20 @@ class _Language():
         "#arrow_right_button": "{ARROW_RIGHT_SHORT}",
         "#arrow_left_button": "{ARROW_LEFT_SHORT}",
     }
-    dict_en = ujson.load(open("languages/english/buttons.json", "r", encoding="utf-8"))
-    dict_pt = ujson.load(open("languages/portuguese/buttons.json", "r", encoding="utf-8"))
+
+    @staticmethod
+    def set_language(language: str) -> None:
+        """Sets the language to be used for button text
+
+        Args:
+            language (str): The language to use, must be in languages/
+        """
+        supported_languages = ["en-us", "pt-br"]
+        if language not in supported_languages:
+            raise ValueError("Language not supported")
+        _Language.LANGUAGE = language
+        i18n.set('locale', language)
+
     @staticmethod
     def check(object_id: Union[str, None]) -> str:
         """Checks if the object_id is in the dictionary, and returns the appropriate string (if found)
@@ -111,18 +130,21 @@ class _Language():
             default: ''
         """
         if object_id is None:
+            return '' # dev testing, can either replace following line or be deleted
             raise ValueError("object_id cannot be None")
-        if _Language.LANGUAGE == "en":
-            search = _Language.dict_en.get(object_id)
-        elif _Language.LANGUAGE == "pt":
-            search = _Language.dict_pt.get(object_id)
-        if search != None:
-            return search
-        # backup for global
+        search_term = f"buttons.{object_id}"
+        translated = i18n.t(search_term, locale=_Language.LANGUAGE)
+        if translated != search_term:
+            return translated
+        # backup search for global
         search = _Language.dict_global.get(object_id)
         if search != None:
             return search
-        print('not found! ' + object_id)
+        if _Language.LANGUAGE == 'en-us':
+            warnings.warn('not found! ' + object_id)
+        else:
+            warnings.warn(f'Translation for "{object_id}" in {_Language.LANGUAGE} not found! Using fallback language "en-us"')
+            return i18n.t(search_term, locale='en-us')
         return ''
 
 class _Symbol():
@@ -377,7 +399,6 @@ class UIButton(scripts.game_structure.image_button.UISpriteButton):
         self.image.rebuild()
         self.button.rebuild()
         
-
 class CatButton(pygame_gui.elements.UIButton):
     """TODO: document"""
 
@@ -492,7 +513,10 @@ class CatButton(pygame_gui.elements.UIButton):
         self.internal.image.set_image(pygame.transform.scale(sprite, self.relative_rect.size))
         super().on_unhovered()
 
-_Symbol._populate()
+if PLATFORM == "web" and DEBUG:
+    _Symbol._populate()
+else:
+    _Symbol.__init__()
 
 class RectButton():
     """TODO: document"""
