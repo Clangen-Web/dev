@@ -86,7 +86,7 @@ PLATFORM = None
 
 class _Language():
     """Class for rendering button text in other languages, from languages/.*/buttons.json"""
-    LANGUAGE = "pt-br"
+    LANGUAGE = "en-us"
     i18n.load_path.append('languages/buttons')
     i18n.set('file_format', 'json')
     i18n.set('locale', LANGUAGE)
