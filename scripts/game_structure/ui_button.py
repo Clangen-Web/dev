@@ -80,8 +80,7 @@ import scripts.game_structure.image_button
 pygame.font.init()
 DEBUG = False
 FONT = pygame.font.Font('resources/fonts/clangen.ttf', 16)
-# COLOR = (239, 229, 206)
-COLOR = (239, 229, 0)
+COLOR = (239, 229, 206)
 PLATFORM = None
 
 class _Language():
