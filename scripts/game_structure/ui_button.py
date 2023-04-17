@@ -83,6 +83,8 @@ FONT = pygame.font.Font('resources/fonts/clangen.ttf', 16)
 COLOR = (239, 229, 206)
 PLATFORM = None
 
+# set PLATFORM to "web" and DEBUG to True to enable web debugging
+
 class _Language():
     """Class for rendering button text in other languages, from languages/.*/buttons.json"""
     LANGUAGE = "en-us"
@@ -148,7 +150,7 @@ class _Language():
         if search != None:
             return search
         if _Language.LANGUAGE == 'en-us':
-            warnings.warn('not found! ' + object_id)
+            warnings.warn('text (en-us) for not found! ' + object_id)
         else:
             warnings.warn(f'Translation for "{object_id}" in {_Language.LANGUAGE} not found! Using fallback language "en-us"')
             return i18n.t(search_term, locale='en-us')
@@ -181,22 +183,23 @@ class _Symbol():
     
     @staticmethod
     def _populate() -> None:
-        _Symbol._custom["{DICE}"] = _Symbol.generate_surface((16, 16))
-        _Symbol._custom["{ARROW_LEFT_SHORT}"] = _Symbol.generate_surface((16, 16))
-        _Symbol._custom["{ARROW_LEFT_MED}"] = _Symbol.generate_surface((16, 16))
-        _Symbol._custom["{ARROW_RIGHT_MED}"] = _Symbol.generate_surface((16, 16))
-        _Symbol._custom["{PATROL_CLAW}"] = _Symbol.generate_surface((16, 16))
-        _Symbol._custom["{PATROL_PAW}"] =_Symbol.generate_surface((16, 16))
-        _Symbol._custom["{PATROL_MOUSE}"] = _Symbol.generate_surface((16, 16))
-        _Symbol._custom["{PATROL_HERB}"] = _Symbol.generate_surface((16, 16))
-        _Symbol._custom["{YOUR_CLAN}"] = _Symbol.generate_surface((16, 16))
-        _Symbol._custom["{OUTSIDE_CLAN}"] = _Symbol.generate_surface((16, 16))
-        _Symbol._custom["{STARCLAN}"] = _Symbol.generate_surface((16, 16))
-        _Symbol._custom["{UNKNOWN_RESIDENCE}"] = _Symbol.generate_surface((16, 16))
-        _Symbol._custom["{DARK_FOREST}"] = _Symbol.generate_surface((16, 16))
-        _Symbol._custom["{LEADER_CEREMONY}"] = _Symbol.generate_surface((16, 16))
-        _Symbol._custom["{MEDIATION}"] =_Symbol.generate_surface((16, 16))
-        _Symbol._custom["{EXIT}"] = _Symbol.generate_surface((10, 10))
+        _Symbol._custom["{DICE}"] = _Symbol._web_load("resources/images/symbols/random_dice.png")
+        _Symbol._custom["{ARROW_LEFT_SHORT}"] = _Symbol._web_load("resources/images/symbols/arrow_short.png")
+        _Symbol._custom["{ARROW_RIGHT_SHORT}"] = pygame.transform.flip(_Symbol._web_load("resources/images/symbols/arrow_short.png"), True, False)
+        _Symbol._custom["{ARROW_LEFT_MED}"] = _Symbol._web_load("resources/images/symbols/arrow_medium.png")
+        _Symbol._custom["{ARROW_RIGHT_MED}"] = pygame.transform.flip(_Symbol._web_load("resources/images/symbols/arrow_medium.png"), True, False)
+        _Symbol._custom["{PATROL_CLAW}"] = _Symbol._web_load("resources/images/symbols/patrol_claws.png")
+        _Symbol._custom["{PATROL_PAW}"] = _Symbol._web_load("resources/images/symbols/patrol_paw.png")
+        _Symbol._custom["{PATROL_MOUSE}"] = _Symbol._web_load("resources/images/symbols/patrol_mouse.png")
+        _Symbol._custom["{PATROL_HERB}"] = _Symbol._web_load("resources/images/symbols/patrol_herb.png")
+        _Symbol._custom["{YOUR_CLAN}"] = _Symbol._web_load("resources/images/symbols/your_clan.png")
+        _Symbol._custom["{OUTSIDE_CLAN}"] = _Symbol._web_load("resources/images/symbols/outside_clan.png")
+        _Symbol._custom["{STARCLAN}"] = _Symbol._web_load("resources/images/symbols/starclan.png")
+        _Symbol._custom["{UNKNOWN_RESIDENCE}"] = _Symbol._web_load("resources/images/symbols/unknown_residence.png")
+        _Symbol._custom["{DARK_FOREST}"] = _Symbol._web_load("resources/images/symbols/dark_forest.png")
+        _Symbol._custom["{LEADER_CEREMONY}"] = _Symbol._web_load("resources/images/symbols/leader_ceremony.png")
+        _Symbol._custom["{MEDIATION}"] = _Symbol._web_load("resources/images/symbols/mediation.png")
+        _Symbol._custom["{EXIT}"] = _Symbol._web_load("resources/images/symbols/exit.png")
 
     @staticmethod
     def load(image_path: str) -> pygame.Surface:
@@ -216,17 +219,22 @@ class _Symbol():
         return surface
     
     @staticmethod
-    def generate_surface(size: tuple) -> pygame.Surface:
-        """Generates a temporary surface, to be used when loading without symbols
+    def _web_load(image_path: str) -> pygame.Surface:
+        """Alternative method of loading an image, specifically because web doesn't like PixelArray
 
         Args:
-            size (tuple): Size of surface, (width, height)
+            image_path (str): relative path to the image
 
         Returns:
             pygame.Surface
         """
-        surface = pygame.Surface(size)
-        return surface
+        surface = pygame.image.load(image_path).convert_alpha()
+        if "dark_forest" in image_path:
+            return surface
+        image = surface.copy()
+        image.fill((0, 0, 0, 255), None, pygame.BLEND_RGBA_MULT)
+        image.fill(COLOR[0:3] + (0,), None, pygame.BLEND_RGBA_ADD)
+        return image
 
 class _Style():
     """Class for parsing resources/styles.json, and determining custom styles from the #object_id"""
@@ -717,10 +725,10 @@ class RectButton():
         if text_rect.width > self.size[0] - 8 and DEBUG:
             warnings.warn(f'Text width is too small to fit in the button comfortably, minimum width is {text_rect.width + 12}')
         # yell at you if the text will be offset by 1px
-        if text_rect.width % 2 != 0 and self.size[0] % 2 == 0 and DEBUG:
-            warnings.warn('Text has an odd width! Consider using an odd width instead of an even one.', Warning, stacklevel=5)
-        elif text_rect.width % 2 == 0 and self.size[0] % 2 != 0 and DEBUG:
-            warnings.warn('Text has an even width! Consider using an even width instead of an odd one.', Warning, stacklevel=5)
+        # if text_rect.width % 2 != 0 and self.size[0] % 2 == 0 and DEBUG:
+        #     warnings.warn('Text has an odd width! Consider using an odd width instead of an even one.', Warning, stacklevel=5)
+        # elif text_rect.width % 2 == 0 and self.size[0] % 2 != 0 and DEBUG:
+        #     warnings.warn('Text has an even width! Consider using an even width instead of an odd one.', Warning, stacklevel=5)
         self.surface.blit(self.text, text_rect)
 
     def _hang(self):

@@ -1898,7 +1898,7 @@ class ProfileScreen(Screens):
             pass
         else:
             self.open_tab = 'dangerous'
-            self.kill_cat_button = UIButton(
+            self.kill_cat_button = UIImageButton(
                 scale(pygame.Rect((1156, 972), (344, 72))),
                 "",
                 object_id="#kill_cat_button",
