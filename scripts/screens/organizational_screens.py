@@ -940,12 +940,12 @@ class SettingsScreen(Screens):
                 object_id="#english_lang_button",
                 manager=MANAGER)
             self.checkboxes['spanish'] = UIButton(
-                scale(pygame.Rect((620, 502), (360, 74))),
+                scale(pygame.Rect((628, 502), (344, 74))),
                 "",
                 object_id="#spanish_lang_button",
                 manager=MANAGER)
             self.checkboxes['german'] = UIButton(
-                scale(pygame.Rect((620, 576), (360, 74))),
+                scale(pygame.Rect((628, 576), (344, 74))),
                 "",
                 object_id="#german_lang_button",
                 manager=MANAGER)

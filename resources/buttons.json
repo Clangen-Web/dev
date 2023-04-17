@@ -220,72 +220,6 @@
         },
         "prototype": "#image_button"
     },
-    "#done_button":
-    {
-        "prototype": "#image_button",
-        "images":
-        {
-            "normal_image":
-            {
-                "path": "resources/images/buttons/done.png"
-            },
-            "hovered_image":
-            {
-                "path": "resources/images/buttons/done_hover.png"
-            },
-            "selected_image":
-            {
-                "path": "resources/images/buttons/done_hover.png"
-            },
-            "disabled_image":
-            {
-                "path": "resources/images/buttons/done_unavailable.png"
-            }
-            
-        }
-    },
-    "#exit_window_button":
-    {
-        "prototype": "#image_button",
-        "images":
-        {
-            "normal_image":
-            {
-                "path": "resources/images/buttons/exit_window_button.png"
-            },
-            "hovered_image":
-            {
-                "path": "resources/images/buttons/exit_window_button_hover.png"
-            },
-            "selected_image":
-            {
-                "path": "resources/images/buttons/exit_window_button_hover.png"
-            }
-        }
-    },
-    "#main_menu_button":
-    {
-        "prototype": "#image_button",
-        "images":
-        {
-            "normal_image":
-            {
-                "path": "resources/images/buttons/main_menu.png"
-            },
-            "hovered_image":
-            {
-                "path": "resources/images/buttons/main_menu_hover.png"
-            },
-            "selected_image":
-            {
-                "path": "resources/images/buttons/main_menu_hover.png"
-            },
-            "disabled_image":
-            {
-                "path": "resources/images/buttons/main_menu_unavailable.png"
-            }
-        }
-    },
     "#smallquit_button":
     {
         "prototype": "#image_button",
@@ -513,29 +447,6 @@
             "disabled_image":
             {
                 "path":"resources/images/buttons/save_clan_unavailable.png"
-            }
-        }
-    },
-    "#close_tab_button": 
-    {
-        "prototype": "#image_button",
-        "images":
-        {
-            "normal_image":
-            {
-                "path": "resources/images/buttons/close.png"
-            },
-            "hovered_image":
-            {
-                "path": "resources/images/buttons/close_hover.png"
-            },
-            "selected_image":
-            {
-                "path": "resources/images/buttons/close_hover.png"
-            },
-            "disabled_image":
-            {
-                "path":"resources/images/buttons/close_unavailable.png"
             }
         }
     },
@@ -1256,29 +1167,6 @@
             }
         }
     },
-    "#continue_button_small": 
-    {
-        "prototype": "#image_button",
-        "images":
-        {
-            "normal_image":
-            {
-                "path": "resources/images/buttons/continue_small.png"
-            },
-            "hovered_image":
-            {
-                "path": "resources/images/buttons/continue_small_hover.png"
-            },
-            "selected_image":
-            {
-                "path": "resources/images/buttons/continue_small_hover.png"
-            },
-            "disabled_image":
-            {
-                "path":"resources/images/buttons/continue_small_unavailable.png"
-            }
-        }
-    },
     "#saved_clan": 
     {
         "colours":
@@ -1573,75 +1461,6 @@
             "filled_bar": "#8CB250"
         }
     },
-    "#begin_anew_button":
-    {
-        "prototype": "#image_button",
-        "images":
-        {
-            "normal_image":
-            {
-                "path": "resources/images/buttons/begin_anew.png"
-            },
-            "hovered_image":
-            {
-                "path": "resources/images/buttons/begin_anew_hover.png"
-            },
-            "selected_image":
-            {
-                "path": "resources/images/buttons/begin_anew_hover.png"
-            },
-            "disabled_image":
-            {
-                "path":"resources/images/buttons/begin_anew.png"
-            }
-        }
-    },
-    "#delete_it_button":
-    {
-        "prototype": "#image_button",
-        "images":
-        {
-            "normal_image":
-            {
-                "path": "resources/images/buttons/delete_it.png"
-            },
-            "hovered_image":
-            {
-                "path": "resources/images/buttons/delete_it_hover.png"
-            },
-            "selected_image":
-            {
-                "path": "resources/images/buttons/delete_it_hover.png"
-            },
-            "disabled_image":
-            {
-                "path":"resources/images/buttons/delete_it.png"
-            }
-        }
-    },
-    "#go_back_button":
-    {
-        "prototype": "#image_button",
-        "images":
-        {
-            "normal_image":
-            {
-                "path": "resources/images/buttons/go_back.png"
-            },
-            "hovered_image":
-            {
-                "path": "resources/images/buttons/go_back_hover.png"
-            },
-            "selected_image":
-            {
-                "path": "resources/images/buttons/go_back_hover.png"
-            },
-            "disabled_image":
-            {
-                "path":"resources/images/buttons/go_back.png"
-            }
-        }
-    },
     "#not_yet_button":
     {
         "prototype": "#image_button",
@@ -1664,23 +1483,6 @@
                 "path":"resources/images/buttons/not_yet.png"
             }
         }
-    },
-    "#cancel_button": {
-        "images": {
-            "disabled_image": {
-                "path": "resources/images/buttons/cancel_unavailable.png"
-            },
-            "hovered_image": {
-                "path": "resources/images/buttons/cancel_hover.png"
-            },
-            "normal_image": {
-                "path": "resources/images/buttons/cancel.png"
-            },
-            "selected_image": {
-                "path": "resources/images/buttons/cancel_hover.png"
-            }
-        },
-        "prototype": "#image_button"
     },
     "#fav_star":
     {

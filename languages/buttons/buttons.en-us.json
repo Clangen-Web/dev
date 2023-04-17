@@ -6,7 +6,6 @@
         "#settings_button": "settings + info",
         "#quit_button": "quit",
         "#open_data_directory_button": "Open Data Directory",
-        "#exit_window_button": "×",
         "#main_menu_button": "{ARROW_LEFT_MED} Main Menu",
         "#general_settings_button": "general settings",
         "#relation_settings_button": "relation settings",
@@ -99,16 +98,13 @@
         "#view_profile_button": "view profile",
         "#mediate_button": "Mediate",
         "#sabotage_button": "Sabotage",
-        "#your_clan_button": "{YOUR_CLAN}",
-        "#outside_clan_button": "{OUTSIDE_CLAN}",
-        "#starclan_button": "{STARCLAN}",
-        "#unknown_residence_button": "{UNKNOWN_RESIDENCE}",
-        "#dark_forest_button": "{DARK_FOREST}",
-        "#leader_ceremony_button": "{LEADER_CEREMONY}",
-        "#mediation_button": "{MEDIATION}",
-        "#smallquit_button": "{ARROW_LEFT_SHORT} Quit Game",
+        "#smallquit_button": "{ARROW_LEFT_MED} Quit Game",
         "#delete_it_button": "Delete it!",
         "#go_back_button": "No! Go back!",
-        "#update_button": "Update Available!"
+        "#update_button": "Update Available!",
+        "#begin_anew_button": "begin anew",
+        "#not_yet_button": "not yet",
+        "#done_button": "done",
+        "#cancel_button": "cancel"
     }
 }

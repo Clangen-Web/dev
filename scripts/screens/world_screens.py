@@ -1,7 +1,7 @@
 import pygame
 import pygame_gui
 from math import ceil
-from scripts.game_structure.image_button import UISpriteButton, UIImageButton
+from scripts.game_structure.image_button import UISpriteButton
 from scripts.game_structure.ui_button import UIButton
 from .base_screens import Screens, cat_profiles
 

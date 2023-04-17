@@ -32,7 +32,7 @@ Add language:
     increase button size.
     Supported characters:
         [A-Za-z0-9] ! @ # $ % ^ & * ( ) - _ = + , . < > / ? { } | \ [ ] ~ ` ; :
-        ¡ ¿ ± µ × ÷
+        ¡ ¿ ± µ ÷
         Ç ç ñ
         á â ã ä æ 
         é ê ë 
@@ -103,6 +103,14 @@ class _Language():
         "#patrol_next_page": "{ARROW_RIGHT_SHORT}",
         "#arrow_right_button": "{ARROW_RIGHT_SHORT}",
         "#arrow_left_button": "{ARROW_LEFT_SHORT}",
+        "#your_clan_button": "{YOUR_CLAN}",
+        "#outside_clan_button": "{OUTSIDE_CLAN}",
+        "#starclan_button": "{STARCLAN}",
+        "#unknown_residence_button": "{UNKNOWN_RESIDENCE}",
+        "#dark_forest_button": "{DARK_FOREST}",
+        "#leader_ceremony_button": "{LEADER_CEREMONY}",
+        "#mediation_button": "{MEDIATION}",
+        "#exit_window_button": "{EXIT}",
     }
 
     @staticmethod
@@ -170,6 +178,7 @@ class _Symbol():
         _Symbol._custom["{DARK_FOREST}"] = _Symbol.load("resources/images/symbols/dark_forest.png")
         _Symbol._custom["{LEADER_CEREMONY}"] = _Symbol.load("resources/images/symbols/leader_ceremony.png")
         _Symbol._custom["{MEDIATION}"] = _Symbol.load("resources/images/symbols/mediation.png")
+        _Symbol._custom["{EXIT}"] = _Symbol.load("resources/images/symbols/exit.png")
     
     @staticmethod
     def _populate() -> None:
@@ -188,6 +197,7 @@ class _Symbol():
         _Symbol._custom["{DARK_FOREST}"] = _Symbol.generate_surface((16, 16))
         _Symbol._custom["{LEADER_CEREMONY}"] = _Symbol.generate_surface((16, 16))
         _Symbol._custom["{MEDIATION}"] =_Symbol.generate_surface((16, 16))
+        _Symbol._custom["{EXIT}"] = _Symbol.generate_surface((10, 10))
 
     @staticmethod
     def load(image_path: str) -> pygame.Surface:
@@ -378,7 +388,7 @@ class UIButton(scripts.game_structure.image_button.UISpriteButton):
         self.button = CatButton(relative_rect, visible=visible,
                                 starting_height=starting_height, 
                                 manager=manager, tool_tip_text=tool_tip_text,
-                                internal=self)
+                                internal=self, container=container)
         self.visible = visible
     def __setattr__(self, name, value):
         self.__dict__[name] = value
@@ -408,6 +418,7 @@ class CatButton(pygame_gui.elements.UIButton):
                  starting_height=1,
                  manager=None,
                  tool_tip_text=None,
+                 container=None,
                  internal=None) -> None:
         """TODO: document"""
         self.rounded_corners = internal.rounded_corners
@@ -420,7 +431,8 @@ class CatButton(pygame_gui.elements.UIButton):
                          visible=visible,
                          starting_height=starting_height,
                          manager=manager,
-                         tool_tip_text=tool_tip_text)
+                         tool_tip_text=tool_tip_text,
+                         container=container)
     def on_hovered(self):
         """TODO: document"""
         self.hover = True
