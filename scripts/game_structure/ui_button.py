@@ -1,4 +1,5 @@
 """Python module for generating a button surface, based off of image_button.UISpriteButton"""
+# pylint: disable=too-many-arguments, line-too-long, pointless-string-statement, missing-function-docstring
 """Editing Guide:
 Text / Symbol color: 
     COLOR
@@ -31,7 +32,7 @@ Add language:
     Be prepared to abbreviate certain words, or remove others all together! There is currently no feature yet to
     increase button size.
     Supported characters:
-        [A-Za-z0-9] ! @ # $ % ^ & * ( ) - _ = + , . < > / ? { } | \ [ ] ~ ` ; :
+        [A-Za-z0-9] ! @ # $ % ^ & * ( ) - _ = + , . < > / ? { } | \\ [ ] ~ ` ; :
         ¡ ¿ ± µ ÷
         Ç ç ñ
         á â ã ä æ 
@@ -68,14 +69,16 @@ Change default color palette(s):
 """
 import pygame
 import pygame_gui
-import ujson
 import warnings
 import re
 import i18n
 from typing import Union
 import scripts.game_structure.image_button
 
-# pylint: disable=too-many-arguments, line-too-long
+try:
+    import ujson
+except:
+    import json as ujson
 
 pygame.font.init()
 DEBUG = False
@@ -139,7 +142,7 @@ class _Language():
             default: ''
         """
         if object_id is None:
-            return '' # dev testing, can either replace following line or be deleted
+            # return ''
             raise ValueError("object_id cannot be None")
         search_term = f"buttons.{object_id}"
         translated = i18n.t(search_term, locale=_Language.LANGUAGE)
@@ -147,7 +150,7 @@ class _Language():
             return translated
         # backup search for global
         search = _Language.dict_global.get(object_id)
-        if search != None:
+        if search is not None:
             return search
         if _Language.LANGUAGE == 'en-us':
             warnings.warn('text (en-us) for not found! ' + object_id)
@@ -159,47 +162,48 @@ class _Language():
 class _Symbol():
     """Custom class for rendering symbols from an image file"""
     _color = pygame.Color(COLOR)
-    _custom = {}
+    custom = {}
     @staticmethod
     def __init__() -> None:
-        """Populates _Symbol._custom with the appropriate custom symbols"""
-        _Symbol._custom["{DICE}"] = _Symbol.load("resources/images/symbols/random_dice.png")
-        _Symbol._custom["{ARROW_LEFT_SHORT}"] = _Symbol.load("resources/images/symbols/arrow_short.png")
-        _Symbol._custom["{ARROW_RIGHT_SHORT}"] = pygame.transform.flip(_Symbol.load("resources/images/symbols/arrow_short.png"), True, False)
-        _Symbol._custom["{ARROW_LEFT_MED}"] = _Symbol.load("resources/images/symbols/arrow_medium.png")
-        _Symbol._custom["{ARROW_RIGHT_MED}"] = pygame.transform.flip(_Symbol.load("resources/images/symbols/arrow_medium.png"), True, False)
-        _Symbol._custom["{PATROL_CLAW}"] = _Symbol.load("resources/images/symbols/patrol_claws.png")
-        _Symbol._custom["{PATROL_PAW}"] = _Symbol.load("resources/images/symbols/patrol_paw.png")
-        _Symbol._custom["{PATROL_MOUSE}"] = _Symbol.load("resources/images/symbols/patrol_mouse.png")
-        _Symbol._custom["{PATROL_HERB}"] = _Symbol.load("resources/images/symbols/patrol_herb.png")
-        _Symbol._custom["{YOUR_CLAN}"] = _Symbol.load("resources/images/symbols/your_clan.png")
-        _Symbol._custom["{OUTSIDE_CLAN}"] = _Symbol.load("resources/images/symbols/outside_clan.png")
-        _Symbol._custom["{STARCLAN}"] = _Symbol.load("resources/images/symbols/starclan.png")
-        _Symbol._custom["{UNKNOWN_RESIDENCE}"] = _Symbol.load("resources/images/symbols/unknown_residence.png")
-        _Symbol._custom["{DARK_FOREST}"] = _Symbol.load("resources/images/symbols/dark_forest.png")
-        _Symbol._custom["{LEADER_CEREMONY}"] = _Symbol.load("resources/images/symbols/leader_ceremony.png")
-        _Symbol._custom["{MEDIATION}"] = _Symbol.load("resources/images/symbols/mediation.png")
-        _Symbol._custom["{EXIT}"] = _Symbol.load("resources/images/symbols/exit.png")
-    
+        """Populates _Symbol.custom with the appropriate custom symbols"""
+        _Symbol.custom["{DICE}"] = _Symbol.load("resources/images/symbols/random_dice.png")
+        _Symbol.custom["{ARROW_LEFT_SHORT}"] = _Symbol.load("resources/images/symbols/arrow_short.png")
+        _Symbol.custom["{ARROW_RIGHT_SHORT}"] = pygame.transform.flip(_Symbol.load("resources/images/symbols/arrow_short.png"), True, False)
+        _Symbol.custom["{ARROW_LEFT_MED}"] = _Symbol.load("resources/images/symbols/arrow_medium.png")
+        _Symbol.custom["{ARROW_RIGHT_MED}"] = pygame.transform.flip(_Symbol.load("resources/images/symbols/arrow_medium.png"), True, False)
+        _Symbol.custom["{PATROL_CLAW}"] = _Symbol.load("resources/images/symbols/patrol_claws.png")
+        _Symbol.custom["{PATROL_PAW}"] = _Symbol.load("resources/images/symbols/patrol_paw.png")
+        _Symbol.custom["{PATROL_MOUSE}"] = _Symbol.load("resources/images/symbols/patrol_mouse.png")
+        _Symbol.custom["{PATROL_HERB}"] = _Symbol.load("resources/images/symbols/patrol_herb.png")
+        _Symbol.custom["{YOUR_CLAN}"] = _Symbol.load("resources/images/symbols/your_clan.png")
+        _Symbol.custom["{OUTSIDE_CLAN}"] = _Symbol.load("resources/images/symbols/outside_clan.png")
+        _Symbol.custom["{STARCLAN}"] = _Symbol.load("resources/images/symbols/starclan.png")
+        _Symbol.custom["{UNKNOWN_RESIDENCE}"] = _Symbol.load("resources/images/symbols/unknown_residence.png")
+        _Symbol.custom["{DARK_FOREST}"] = _Symbol.load("resources/images/symbols/dark_forest.png")
+        _Symbol.custom["{LEADER_CEREMONY}"] = _Symbol.load("resources/images/symbols/leader_ceremony.png")
+        _Symbol.custom["{MEDIATION}"] = _Symbol.load("resources/images/symbols/mediation.png")
+        _Symbol.custom["{EXIT}"] = _Symbol.load("resources/images/symbols/exit.png")
+
     @staticmethod
-    def _populate() -> None:
-        _Symbol._custom["{DICE}"] = _Symbol._web_load("resources/images/symbols/random_dice.png")
-        _Symbol._custom["{ARROW_LEFT_SHORT}"] = _Symbol._web_load("resources/images/symbols/arrow_short.png")
-        _Symbol._custom["{ARROW_RIGHT_SHORT}"] = pygame.transform.flip(_Symbol._web_load("resources/images/symbols/arrow_short.png"), True, False)
-        _Symbol._custom["{ARROW_LEFT_MED}"] = _Symbol._web_load("resources/images/symbols/arrow_medium.png")
-        _Symbol._custom["{ARROW_RIGHT_MED}"] = pygame.transform.flip(_Symbol._web_load("resources/images/symbols/arrow_medium.png"), True, False)
-        _Symbol._custom["{PATROL_CLAW}"] = _Symbol._web_load("resources/images/symbols/patrol_claws.png")
-        _Symbol._custom["{PATROL_PAW}"] = _Symbol._web_load("resources/images/symbols/patrol_paw.png")
-        _Symbol._custom["{PATROL_MOUSE}"] = _Symbol._web_load("resources/images/symbols/patrol_mouse.png")
-        _Symbol._custom["{PATROL_HERB}"] = _Symbol._web_load("resources/images/symbols/patrol_herb.png")
-        _Symbol._custom["{YOUR_CLAN}"] = _Symbol._web_load("resources/images/symbols/your_clan.png")
-        _Symbol._custom["{OUTSIDE_CLAN}"] = _Symbol._web_load("resources/images/symbols/outside_clan.png")
-        _Symbol._custom["{STARCLAN}"] = _Symbol._web_load("resources/images/symbols/starclan.png")
-        _Symbol._custom["{UNKNOWN_RESIDENCE}"] = _Symbol._web_load("resources/images/symbols/unknown_residence.png")
-        _Symbol._custom["{DARK_FOREST}"] = _Symbol._web_load("resources/images/symbols/dark_forest.png")
-        _Symbol._custom["{LEADER_CEREMONY}"] = _Symbol._web_load("resources/images/symbols/leader_ceremony.png")
-        _Symbol._custom["{MEDIATION}"] = _Symbol._web_load("resources/images/symbols/mediation.png")
-        _Symbol._custom["{EXIT}"] = _Symbol._web_load("resources/images/symbols/exit.png")
+    def populate() -> None:
+        """Temporary class for populating _Symbol.custom on the web build, testing a different recolor method"""
+        _Symbol.custom["{DICE}"] = _Symbol._web_load("resources/images/symbols/random_dice.png")
+        _Symbol.custom["{ARROW_LEFT_SHORT}"] = _Symbol._web_load("resources/images/symbols/arrow_short.png")
+        _Symbol.custom["{ARROW_RIGHT_SHORT}"] = pygame.transform.flip(_Symbol._web_load("resources/images/symbols/arrow_short.png"), True, False)
+        _Symbol.custom["{ARROW_LEFT_MED}"] = _Symbol._web_load("resources/images/symbols/arrow_medium.png")
+        _Symbol.custom["{ARROW_RIGHT_MED}"] = pygame.transform.flip(_Symbol._web_load("resources/images/symbols/arrow_medium.png"), True, False)
+        _Symbol.custom["{PATROL_CLAW}"] = _Symbol._web_load("resources/images/symbols/patrol_claws.png")
+        _Symbol.custom["{PATROL_PAW}"] = _Symbol._web_load("resources/images/symbols/patrol_paw.png")
+        _Symbol.custom["{PATROL_MOUSE}"] = _Symbol._web_load("resources/images/symbols/patrol_mouse.png")
+        _Symbol.custom["{PATROL_HERB}"] = _Symbol._web_load("resources/images/symbols/patrol_herb.png")
+        _Symbol.custom["{YOUR_CLAN}"] = _Symbol._web_load("resources/images/symbols/your_clan.png")
+        _Symbol.custom["{OUTSIDE_CLAN}"] = _Symbol._web_load("resources/images/symbols/outside_clan.png")
+        _Symbol.custom["{STARCLAN}"] = _Symbol._web_load("resources/images/symbols/starclan.png")
+        _Symbol.custom["{UNKNOWN_RESIDENCE}"] = _Symbol._web_load("resources/images/symbols/unknown_residence.png")
+        _Symbol.custom["{DARK_FOREST}"] = _Symbol._web_load("resources/images/symbols/dark_forest.png")
+        _Symbol.custom["{LEADER_CEREMONY}"] = _Symbol._web_load("resources/images/symbols/leader_ceremony.png")
+        _Symbol.custom["{MEDIATION}"] = _Symbol._web_load("resources/images/symbols/mediation.png")
+        _Symbol.custom["{EXIT}"] = _Symbol._web_load("resources/images/symbols/exit.png")
 
     @staticmethod
     def load(image_path: str) -> pygame.Surface:
@@ -217,7 +221,7 @@ class _Symbol():
         pixel_array.close()
         del pixel_array
         return surface
-    
+
     @staticmethod
     def _web_load(image_path: str) -> pygame.Surface:
         """Alternative method of loading an image, specifically because web doesn't like PixelArray
@@ -254,23 +258,28 @@ class _Style():
             default: [True, True, True, True]
         """
         style = _Style.styles_round.get(object_id)
-        if style != None:
-            if isinstance(style, list) and len(style) == 4: return style
-            elif isinstance(style, bool): return [style, style, style, style]
+        if style is not None:
+            if isinstance(style, list) and len(style) == 4:
+                return style
+            elif isinstance(style, bool):
+                return [style, style, style, style]
         return [True, True, True, True]
     @staticmethod
     def check_hanging(object_id) -> bool:
-        if object_id == None: return False
+        if object_id is None:
+            return False
         style = _Style.styles_hanging.get(object_id)
-        if style != None:
+        if style is not None:
             return style
         return False
     @staticmethod
     def check_shadow(object_id) -> list:
-        if object_id == None: return [True, True, False, False]
+        if object_id is None:
+            return [True, True, False, False]
         style = _Style.styles_shadow.get(object_id)
-        if style != None:
-            if isinstance(style, list) and len(style) == 4: return style
+        if style is not None:
+            if isinstance(style, list) and len(style) == 4:
+                return style
         return [True, True, False, False]
 
 class Palette():
@@ -279,7 +288,7 @@ class Palette():
         (0, 0, 0, 0), (47, 41, 24, 255), (121, 96, 69, 255), (101, 89, 52, 255), (87, 76, 45, 255)
     ]
     hover = [
-        (0, 0, 0, 0), (14, 11, 4, 255), (41, 27, 15, 255), (30, 24, 9, 255), (23, 18, 7, 255)   
+        (0, 0, 0, 0), (14, 11, 4, 255), (41, 27, 15, 255), (30, 24, 9, 255), (23, 18, 7, 255)
     ]
     unavailable = [
         (0, 0, 0, 0), (58, 56, 51, 255), (112, 107, 100, 255), (92, 88, 80, 255), (80, 78, 70, 255)
@@ -379,7 +388,7 @@ class UIButton(scripts.game_structure.image_button.UISpriteButton):
         cache = ButtonCache.load_button(size=relative_rect.size, text=self.text)
         if cache:
             sprite = cache['surface']
-        else:            
+        else:
             sprite = ButtonCache.store_button(
                 Button.new(size=relative_rect.size, text=self.text, rounded_corners=self.rounded_corners, hanging=self.hanging, shadows=self.shadows),
                            size=relative_rect.size,
@@ -393,7 +402,7 @@ class UIButton(scripts.game_structure.image_button.UISpriteButton):
         self.image.disable()
         # The transparent button. This a subclass that UIButton that also hold the cat_id.
         self.button = CatButton(relative_rect, visible=visible,
-                                starting_height=starting_height, 
+                                starting_height=starting_height,
                                 manager=manager, tool_tip_text=tool_tip_text,
                                 internal=self, container=container)
         self.visible = visible
@@ -408,14 +417,14 @@ class UIButton(scripts.game_structure.image_button.UISpriteButton):
         elif name == "_rect":
             self.image._rect = value
             self.button._rect = value
-        elif name == "blit_data": 
+        elif name == "blit_data":
             self.image.blit_data = value
             self.button.blit_data = value
 
     def rebuild(self):
         self.image.rebuild()
         self.button.rebuild()
-        
+
 class CatButton(pygame_gui.elements.UIButton):
     """TODO: document"""
 
@@ -427,7 +436,6 @@ class CatButton(pygame_gui.elements.UIButton):
                  tool_tip_text=None,
                  container=None,
                  internal=None) -> None:
-        """TODO: document"""
         self.rounded_corners = internal.rounded_corners
         self.hanging = internal.hanging
         self.shadows = internal.shadows
@@ -441,7 +449,6 @@ class CatButton(pygame_gui.elements.UIButton):
                          tool_tip_text=tool_tip_text,
                          container=container)
     def on_hovered(self):
-        """TODO: document"""
         self.hover = True
         cache = ButtonCache.load_button(size=self.relative_rect.size,
                                         text=self.internal.text,
@@ -465,7 +472,6 @@ class CatButton(pygame_gui.elements.UIButton):
     def while_hovered(self):
         self.hover = True
     def disable(self):
-        """TODO: document"""
         self.hover = False
         cache = ButtonCache.load_button(size=self.relative_rect.size,
                                         text=self.internal.text,
@@ -489,7 +495,6 @@ class CatButton(pygame_gui.elements.UIButton):
         self.internal.image.set_image(pygame.transform.scale(sprite, self.relative_rect.size))
         super().disable()
     def enable(self):
-        """TODO: document"""
         cache = ButtonCache.load_button(size=self.relative_rect.size,
                                         text=self.internal.text,
                                         rounded_corners=self.rounded_corners,
@@ -512,7 +517,6 @@ class CatButton(pygame_gui.elements.UIButton):
         self.internal.image.set_image(pygame.transform.scale(sprite, self.relative_rect.size))
         super().enable()
     def on_unhovered(self):
-        """TODO: document"""
         self.hover = False
         cache = ButtonCache.load_button(size=self.relative_rect.size,
                                         text=self.internal.text,
@@ -533,7 +537,7 @@ class CatButton(pygame_gui.elements.UIButton):
         super().on_unhovered()
 
 if PLATFORM == "web" and DEBUG:
-    _Symbol._populate()
+    _Symbol.populate()
 else:
     _Symbol.__init__()
 
@@ -635,9 +639,9 @@ class RectButton():
 
     def _build_text(self, text):
         """TODO: document"""
-        if _Symbol._custom.get(text):
+        if _Symbol.custom.get(text):
             self.symbol = True
-            return _Symbol._custom[text]
+            return _Symbol.custom[text]
         texts = []
         height = 0
         width = 0
@@ -647,7 +651,8 @@ class RectButton():
             formatted = ['']
             regex = re.split(r"({|})", line)
             for e,char in enumerate(regex):
-                if char == '': pass
+                if char == '':
+                    pass
                 elif char == '{':
                     formatted.append('')
                     formatted[-1] += char
@@ -661,8 +666,8 @@ class RectButton():
             formatted = list(filter(None, formatted))
             surfaces = []
             for item in formatted:
-                if _Symbol._custom.get(item):
-                    text = _Symbol._custom[item]
+                if _Symbol.custom.get(item):
+                    text = _Symbol.custom[item]
                     text_ = pygame.Surface((text.get_width(), text.get_height() + 4), pygame.SRCALPHA)
                     text_ = text_.convert_alpha()
                     text_.blit(text, (0, 0))
@@ -670,7 +675,7 @@ class RectButton():
                     del text_
                 else:
                     text = FONT.render(item, False, COLOR)
-                
+
                 surfaces.append(text)
                 width_temp += text.get_width()
                 if text.get_height() > height_temp:
@@ -681,7 +686,7 @@ class RectButton():
             for surface in surfaces:
                 text_surface.blit(surface, (current_width, 0))
                 current_width += surface.get_width()
-            
+
             texts.append(text_surface)
             height += height_temp
             if text_surface.get_width() > width:
