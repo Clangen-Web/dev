@@ -75,16 +75,17 @@ import i18n
 from typing import Union, Tuple, Dict, Optional
 import scripts.game_structure.image_button
 
+PLATFORM = None
 try:
     import ujson
 except:
     import json as ujson
+    PLATFORM = "Web"
 
 pygame.font.init()
 DEBUG = False
 FONT = pygame.font.Font('resources/fonts/clangen.ttf', 16)
 COLOR = (239, 229, 206)
-PLATFORM = None
 
 # set PLATFORM to "web" and DEBUG to True to enable web debugging
 

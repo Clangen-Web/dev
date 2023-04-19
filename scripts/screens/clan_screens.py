@@ -1245,7 +1245,7 @@ class ListScreen(Screens):
             scale(pygame.Rect((x_pos, y_pos), (196, 68))),
             "",
             object_id="#filter_by_open_button", manager=MANAGER,
-            starting_height=50
+            starting_height=2
         )
         self.filter_by_open.hide()
         y_pos += 68
@@ -1254,7 +1254,7 @@ class ListScreen(Screens):
             scale(pygame.Rect((x_pos - 2, y_pos), (204, 58))),
             "",
             object_id="#filter_rank_button",
-            starting_height=50, manager=MANAGER
+            starting_height=2, manager=MANAGER
         )
         self.filter_rank.hide()
         y_pos += 58
@@ -1262,7 +1262,7 @@ class ListScreen(Screens):
             scale(pygame.Rect((x_pos - 2, y_pos), (204, 58))),
             "",
             object_id="#filter_age_button",
-            starting_height=50, manager=MANAGER
+            starting_height=2, manager=MANAGER
         )
         self.filter_age.hide()
         y_pos += 58
@@ -1270,7 +1270,7 @@ class ListScreen(Screens):
             scale(pygame.Rect((x_pos - 2, y_pos), (204, 58))),
             "",
             object_id="#filter_ID_button",
-            starting_height=50, manager=MANAGER
+            starting_height=2, manager=MANAGER
         )
         self.filter_id.hide()
         y_pos += 58
@@ -1278,7 +1278,7 @@ class ListScreen(Screens):
             scale(pygame.Rect((x_pos - 2, y_pos), (204, 58))),
             "",
             object_id="#filter_exp_button",
-            starting_height=50, manager=MANAGER
+            starting_height=2, manager=MANAGER
         )
         self.filter_exp.hide()
 
