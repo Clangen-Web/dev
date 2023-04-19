@@ -72,7 +72,7 @@ import pygame_gui
 import warnings
 import re
 import i18n
-from typing import Union
+from typing import Union, Tuple, Dict, Optional
 import scripts.game_structure.image_button
 
 try:
@@ -393,12 +393,13 @@ class UIButton(scripts.game_structure.image_button.UISpriteButton):
                 Button.new(size=relative_rect.size, text=self.text, rounded_corners=self.rounded_corners, hanging=self.hanging, shadows=self.shadows),
                            size=relative_rect.size,
                            text=self.text, rounded_corners=self.rounded_corners, hanging=self.hanging, shadows=self.shadows)
-        self.image = pygame_gui.elements.UIImage(relative_rect,
+        self.image = pyggui_UIImage(relative_rect,
                                                  pygame.transform.scale(sprite, relative_rect.size),
                                                  visible=visible,
                                                  manager=manager,
                                                  container=container,
-                                                 object_id=object_id)
+                                                 object_id=object_id,
+                                                 starting_height=starting_height)
         self.image.disable()
         # The transparent button. This a subclass that UIButton that also hold the cat_id.
         self.button = CatButton(relative_rect, visible=visible,
@@ -834,3 +835,75 @@ class Button():
 
         button = Button.new(size, text, hover, unavailable, rounded_corners, shadows, hanging)
         return button
+
+class pyggui_UIImage(pygame_gui.core.UIElement):
+    def __init__(self,
+                 relative_rect: pygame.Rect,
+                 image_surface: pygame.surface.Surface,
+                 manager: Optional[pygame_gui.core.interfaces.IUIManagerInterface] = None,
+                 image_is_alpha_premultiplied: bool = False,
+                 container: Optional[pygame_gui.core.interfaces.IContainerLikeInterface] = None,
+                 parent_element: Optional[pygame_gui.core.UIElement] = None,
+                 object_id: Optional[Union[pygame_gui.core.ObjectID, str]] = None,
+                 anchors: Optional[Dict[str, Union[str, pygame_gui.core.UIElement]]] = None,
+                 visible: int = 1,
+                 starting_height: int = 1):
+
+        super().__init__(relative_rect, manager, container,
+                         starting_height=starting_height,
+                         layer_thickness=1,
+
+                         anchors=anchors,
+                         visible=visible)
+
+        self._create_valid_ids(container=container,
+                               parent_element=parent_element,
+                               object_id=object_id,
+                               element_id='image')
+
+        self.original_image = None
+
+        self.set_image(image_surface, image_is_alpha_premultiplied)
+
+    def set_dimensions(self, dimensions: Union[pygame.math.Vector2,
+                                               Tuple[int, int],
+                                               Tuple[float, float]]):
+        """
+        Set the dimensions of this image, scaling the image surface to match.
+
+        :param dimensions: The new dimensions of the image.
+
+        """
+        super().set_dimensions(dimensions)
+
+        if self.rect.size != self.image.get_size():
+            if self.original_image is None:
+                if self._pre_clipped_image is not None:
+                    self.original_image = self._pre_clipped_image
+                else:
+                    self.original_image = self.image
+            self._set_image(pygame.transform.smoothscale(self.original_image, self.rect.size))
+
+    def set_image(self,
+                  new_image: Union[pygame.surface.Surface, None],
+                  image_is_alpha_premultiplied: bool = False) -> None:
+        """
+        Allows users to change the image displayed on a UIImage element during run time, without recreating
+        the element.
+
+        GUI images are converted to the correct format for the GUI if the supplied image is not the dimensions
+        of the UIImage element it will be scaled to fit. In this situation, an original size image is retained
+        as well in case of future resizing events.
+
+        :param new_image: the new image surface to use in the UIIamge element.
+        :param image_is_alpha_premultiplied: set to True if the image is already in alpha multiplied colour format.
+        """
+        image_surface = new_image.convert_alpha()
+        if not image_is_alpha_premultiplied:
+            image_surface = pygame_gui.core.utility.premul_alpha_surface(image_surface)
+        if (image_surface.get_width() != self.rect.width or
+                image_surface.get_height() != self.rect.height):
+            self.original_image = image_surface
+            self._set_image(pygame.transform.smoothscale(self.original_image, self.rect.size))
+        else:
+            self._set_image(image_surface)
