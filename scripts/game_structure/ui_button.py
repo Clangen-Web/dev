@@ -296,7 +296,7 @@ class ButtonCache():
                     unavailable: bool = False,
                     rounded_corners: Union[bool, list] = [True, True, True, True],
                     shadows: Union[bool, list] = [True, True, False, False],
-                    hanging: bool = False) -> Union[bool, pygame.Surface]:
+                    hanging: bool = False) -> Union[None, pygame.Surface]:
         """Attempts to load a button surface from the cache
 
         Args:
@@ -310,7 +310,7 @@ class ButtonCache():
 
         Returns:
             Union[bool, pygame.Surface]: The cached button surface
-            default: False
+            default: None
         """
         kwargs = locals()
         keys = ["size", "text", "hover", "unavailable", "rounded_corners", "shadows", "hanging"]
@@ -321,7 +321,7 @@ class ButtonCache():
         if len(obj) != 0:
             return obj[0]
         del obj
-        return False
+        return None
     @staticmethod
     def store_button(surface,
                      size: tuple,
@@ -811,6 +811,7 @@ class Button():
         else:
             button = RectButton(size, text, hover, unavailable, rounded_corners, shadows, hanging)
         return button.surface
+    #unused, might start using again but unlikely
     @staticmethod
     def new_auto_pad(text: str = "",
                      padding: int = 6,
