@@ -75,19 +75,23 @@ import i18n
 from typing import Union, Tuple, Dict, Optional
 import scripts.game_structure.image_button
 
-PLATFORM = None
 try:
     import ujson
 except:
     import json as ujson
-    PLATFORM = "Web"
+    FONT = pygame.font.SysFont(None, 24)
 
 pygame.font.init()
 DEBUG = False
 FONT = pygame.font.Font('resources/fonts/clangen.ttf', 16)
 COLOR = (239, 229, 206)
 
-# set PLATFORM to "web" and DEBUG to True to enable web debugging
+PLATFORM = None
+from sys import platform
+if platform == "emscripten":
+    PLATFORM = "web"
+    FONT = pygame.font.SysFont(None, 24)
+del platform
 
 class _Language():
     """Class for rendering button text in other languages, from languages/.*/buttons.json"""
@@ -143,8 +147,7 @@ class _Language():
             default: ''
         """
         if object_id is None:
-            # return ''
-            raise ValueError("object_id cannot be None")
+            return ''
         search_term = f"buttons.{object_id}"
         translated = i18n.t(search_term, locale=_Language.LANGUAGE)
         if translated != search_term:
@@ -538,7 +541,7 @@ class CatButton(pygame_gui.elements.UIButton):
         self.internal.image.set_image(pygame.transform.scale(sprite, self.relative_rect.size))
         super().on_unhovered()
 
-if PLATFORM == "web" and DEBUG:
+if PLATFORM == "web":
     _Symbol.populate()
 else:
     _Symbol.__init__()
