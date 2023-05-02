@@ -80,7 +80,6 @@ try:
     import ujson
 except:
     import json as ujson
-    FONT = pygame.font.SysFont(None, 24)
 
 pygame.font.init()
 DEBUG = False
@@ -157,6 +156,8 @@ class _Language():
         search = _Language.dict_global.get(object_id)
         if search is not None:
             return search
+        if "checkbox" in object_id:
+            return '' # silently return just so it doesn't yell at you, checkbox is supposed to be blank :)
         if _Language.LANGUAGE == 'en-us':
             warnings.warn('text (en-us) for not found! ' + object_id)
         else:
@@ -188,6 +189,7 @@ class _Symbol():
         _Symbol.custom["{LEADER_CEREMONY}"] = _Symbol.load("resources/images/symbols/leader_ceremony.png")
         _Symbol.custom["{MEDIATION}"] = _Symbol.load("resources/images/symbols/mediation.png")
         _Symbol.custom["{EXIT}"] = _Symbol.load("resources/images/symbols/exit.png")
+        _Symbol.custom["{CHECKMARK}"] = _Symbol.load("resources/images/symbols/checkbox_checkmark.png")
 
     @staticmethod
     def populate() -> None:
@@ -209,6 +211,7 @@ class _Symbol():
         _Symbol.custom["{LEADER_CEREMONY}"] = _Symbol._web_load("resources/images/symbols/leader_ceremony.png")
         _Symbol.custom["{MEDIATION}"] = _Symbol._web_load("resources/images/symbols/mediation.png")
         _Symbol.custom["{EXIT}"] = _Symbol._web_load("resources/images/symbols/exit.png")
+        _Symbol.custom["{CHECKMARK}"] = _Symbol._web_load("resources/images/symbols/checkbox_checkmark.png")
 
     @staticmethod
     def load(image_path: str) -> pygame.Surface:
@@ -238,7 +241,7 @@ class _Symbol():
             pygame.Surface
         """
         surface = pygame.image.load(image_path).convert_alpha()
-        if "dark_forest" in image_path:
+        if any(name in image_path for name in ["dark_forest", "checkbox"]):
             return surface
         image = surface.copy()
         image.fill((0, 0, 0, 255), None, pygame.BLEND_RGBA_MULT)
@@ -304,13 +307,9 @@ class ButtonCache():
     _storage = []
     @staticmethod
     # pylint: disable=unused-argument
-    def load_button(size: tuple,
-                    text: str = "",
+    def load_button(object_id: str = "",
                     hover: bool = False,
-                    unavailable: bool = False,
-                    rounded_corners: Union[bool, list] = [True, True, True, True],
-                    shadows: Union[bool, list] = [True, True, False, False],
-                    hanging: bool = False) -> Union[None, pygame.Surface]:
+                    unavailable: bool = False) -> Union[None, pygame.Surface]:
         """Attempts to load a button surface from the cache
 
         Args:
@@ -338,13 +337,9 @@ class ButtonCache():
         return None
     @staticmethod
     def store_button(surface,
-                     size: tuple,
-                     text: str = "",
+                     object_id: str = "",
                      hover: bool = False,
-                     unavailable: bool = False,
-                     rounded_corners: Union[bool, list] = [True, True, True, True],
-                     shadows: Union[bool, list] = [True, True, False, False],
-                     hanging: bool = False) -> pygame.Surface:
+                     unavailable: bool = False) -> pygame.Surface:
         """Stores a surface to the cache list
 
         Args:
@@ -362,13 +357,9 @@ class ButtonCache():
         """
         store = {
             "surface": surface,
-            "size": size,
-            "text": text,
             "hover": hover,
             "unavailable": unavailable,
-            "rounded_corners": rounded_corners,
-            "shadows": shadows,
-            "hanging": hanging
+            "object_id": object_id
         }
         ButtonCache._storage.append(store)
         del store
@@ -390,21 +381,25 @@ class UIButton(scripts.game_structure.image_button.UISpriteButton):
             self.text = text
         else:
             self.text = _Language.check(object_id)
-        cache = ButtonCache.load_button(size=relative_rect.size, text=self.text)
+        cache = ButtonCache.load_button(object_id=object_id, hover=False, unavailable=False)
         if cache:
             sprite = cache['surface']
         else:
             sprite = ButtonCache.store_button(
-                Button.new(size=relative_rect.size, text=self.text, rounded_corners=self.rounded_corners, hanging=self.hanging, shadows=self.shadows),
-                           size=relative_rect.size,
-                           text=self.text, rounded_corners=self.rounded_corners, hanging=self.hanging, shadows=self.shadows)
+                        Button.new(size=relative_rect.size, 
+                                   text=self.text, 
+                                   rounded_corners=self.rounded_corners, 
+                                   hanging=self.hanging, 
+                                   shadows=self.shadows, 
+                                   object_id=object_id),
+                        object_id, hover=False, unavailable=False)
         self.image = pyggui_UIImage(relative_rect,
-                                                 pygame.transform.scale(sprite, relative_rect.size),
-                                                 visible=visible,
-                                                 manager=manager,
-                                                 container=container,
-                                                 object_id=object_id,
-                                                 starting_height=starting_height)
+                                    pygame.transform.scale(sprite, relative_rect.size),
+                                    visible=visible,
+                                    manager=manager,
+                                    container=container,
+                                    object_id=object_id,
+                                    starting_height=starting_height)
         self.image.disable()
         # The transparent button. This a subclass that UIButton that also hold the cat_id.
         self.button = CatButton(relative_rect, visible=visible,
@@ -456,89 +451,75 @@ class CatButton(pygame_gui.elements.UIButton):
                          container=container)
     def on_hovered(self):
         self.hover = True
-        cache = ButtonCache.load_button(size=self.relative_rect.size,
-                                        text=self.internal.text,
-                                        hover=True, rounded_corners=self.rounded_corners,
-                                        hanging=self.hanging, shadows=self.shadows)
+        cache = ButtonCache.load_button(
+            object_id=self.internal.id, hover=True, unavailable=False
+        )
         if cache:
             sprite = cache['surface']
         else:
-            sprite = ButtonCache.store_button(Button.new(size=self.relative_rect.size,
-                                                         text=self.internal.text,
-                                                         hover=True,
-                                                         rounded_corners=self.rounded_corners,
-                                                         hanging=self.hanging, shadows=self.shadows),
-                                              size=self.relative_rect.size,
-                                              text=self.internal.text,
-                                              hover=True,
-                                              rounded_corners=self.rounded_corners,
-                                              hanging=self.hanging, shadows=self.shadows)
+            sprite = ButtonCache.store_button(
+                Button.new(size=self.relative_rect.size,
+                           text=self.internal.text, hover=True,
+                           rounded_corners=self.rounded_corners,
+                           hanging=self.hanging, shadows=self.shadows,
+                           object_id=self.internal.id),
+                object_id=self.internal.id, hover=True, unavailable=False
+            )
         self.internal.image.set_image(pygame.transform.scale(sprite, self.relative_rect.size))
         super().on_hovered()
     def while_hovered(self):
         self.hover = True
     def disable(self):
         self.hover = False
-        cache = ButtonCache.load_button(size=self.relative_rect.size,
-                                        text=self.internal.text,
-                                        unavailable=True,
-                                        rounded_corners=self.rounded_corners,
-                                        hanging=self.hanging, shadows=self.shadows)
+        cache = ButtonCache.load_button(
+            object_id=self.internal.id, unavailable=True
+        )
         if cache:
             sprite = cache['surface']
         else:
-            sprite = ButtonCache.store_button(Button.new(
-                                                         size=self.relative_rect.size,
-                                                         text=self.internal.text,
-                                                         unavailable=True,
-                                                         rounded_corners=self.rounded_corners,
-                                                         hanging=self.hanging, shadows=self.shadows),
-                                              size=self.relative_rect.size,
-                                              text=self.internal.text,
-                                              unavailable=True,
-                                              rounded_corners=self.rounded_corners,
-                                              hanging=self.hanging, shadows=self.shadows)
+            sprite = ButtonCache.store_button(
+                Button.new(size=self.relative_rect.size,
+                           text=self.internal.text, unavailable=True,
+                           rounded_corners=self.rounded_corners,
+                           hanging=self.hanging, shadows=self.shadows,
+                           object_id=self.internal.id),
+                object_id=self.internal.id, hover=False, unavailable=True
+            )
         self.internal.image.set_image(pygame.transform.scale(sprite, self.relative_rect.size))
         super().disable()
     def enable(self):
-        cache = ButtonCache.load_button(size=self.relative_rect.size,
-                                        text=self.internal.text,
-                                        rounded_corners=self.rounded_corners,
-                                        hanging=self.hanging, shadows=self.shadows,
-                                        hover=self.hover)
+        cache = ButtonCache.load_button(
+            object_id=self.internal.id, hover=self.hover, unavailable=False
+        )
         if cache:
             sprite = cache['surface']
         else:
-            sprite = ButtonCache.store_button(Button.new(
-                                                         size=self.relative_rect.size,
-                                                         text=self.internal.text,
-                                                         rounded_corners=self.rounded_corners,
-                                                         hanging=self.hanging, shadows=self.shadows,
-                                                         hover=self.hover),
-                                              size=self.relative_rect.size,
-                                              text=self.internal.text,
-                                              rounded_corners=self.rounded_corners,
-                                              hanging=self.hanging, shadows=self.shadows,
-                                              hover=self.hover)
+            sprite = ButtonCache.store_button(
+                Button.new(size=self.relative_rect.size,
+                           text=self.internal.text, hover=self.hover,
+                           rounded_corners=self.rounded_corners,
+                           hanging=self.hanging, shadows=self.shadows,
+                           object_id=self.internal.id),
+                object_id=self.internal.id, hover=self.hover, unavailable=False
+            )
         self.internal.image.set_image(pygame.transform.scale(sprite, self.relative_rect.size))
         super().enable()
     def on_unhovered(self):
         self.hover = False
-        cache = ButtonCache.load_button(size=self.relative_rect.size,
-                                        text=self.internal.text,
-                                        rounded_corners=self.rounded_corners,
-                                        hanging=self.hanging, shadows=self.shadows)
+        cache = ButtonCache.load_button(
+            object_id=self.internal.id, hover=False, unavailable=False
+        )
         if cache:
             sprite = cache['surface']
         else:
-            sprite = ButtonCache.store_button(Button.new(size=self.relative_rect.size,
-                                                         text=self.internal.text,
-                                                         rounded_corners=self.rounded_corners,
-                                                         hanging=self.hanging, shadows=self.shadows),
-                                              size=self.relative_rect.size,
-                                              text=self.internal.text,
-                                              rounded_corners=self.rounded_corners,
-                                              hanging=self.hanging, shadows=self.shadows)
+            sprite = ButtonCache.store_button(
+                Button.new(size=self.relative_rect.size,
+                           text=self.internal.text, hover=False,
+                           rounded_corners=self.rounded_corners,
+                           hanging=self.hanging, shadows=self.shadows,
+                           object_id=self.internal.id),
+                object_id=self.internal.id, hover=False, unavailable=False
+            )
         self.internal.image.set_image(pygame.transform.scale(sprite, self.relative_rect.size))
         super().on_unhovered()
 
@@ -572,7 +553,6 @@ class RectButton():
             self.palette = Palette.unavailable
         elif hover:
             self.palette = Palette.hover
-            print("hover palette")
         else:
             self.palette = Palette.palette
         self.rounded_corners = rounded_corners
@@ -799,6 +779,9 @@ class SquareButton(RectButton):
         return surface
 
 class Button():
+    custom = [
+        "#checked_checkbox", "#unchecked_checkbox"
+    ]
     """TODO: document"""
     @staticmethod
     def new(size: tuple,
@@ -807,8 +790,11 @@ class Button():
             unavailable: bool = False,
             rounded_corners: Union[bool, list] = [True, True, True, True],
             shadows: Union[bool, list] = [True, True, False, False],
-            hanging: bool = False) -> pygame.Surface:
+            hanging: bool = False,
+            object_id: str = "") -> pygame.Surface:
         """TODO: document"""
+        if object_id in Button.custom:
+            return CustomButton.handle(object_id, size, text, hover, unavailable, rounded_corners, shadows, hanging)
         if isinstance(rounded_corners, bool):
             rounded_corners = [rounded_corners]*4
         elif not isinstance(rounded_corners, list) and len(rounded_corners) != 4:
@@ -823,24 +809,32 @@ class Button():
         else:
             button = RectButton(size, text, hover, unavailable, rounded_corners, shadows, hanging)
         return button.surface
-    #unused, might start using again but unlikely
+
+class CustomButton():
     @staticmethod
-    def new_auto_pad(text: str = "",
-                     padding: int = 6,
-                     hover: bool = False,
-                     unavailable: bool = False,
-                     rounded_corners: Union[bool, list] = [True, True, True, True],
-                     shadows: Union[bool, list] = [True, True, False, False],
-                     hanging: bool = False) -> pygame.Surface:
-        """TODO: document"""
-        _text = FONT.render(text, False, COLOR)
-
-        width = _text.get_width()
-        height = _text.get_height()
-        size = (width + padding + 12, height + padding + 10)
-
-        button = Button.new(size, text, hover, unavailable, rounded_corners, shadows, hanging)
-        return button
+    def handle(object_id: str,
+               size: tuple,
+               text: str = "",
+               hover: bool = False,
+               unavailable: bool = False,
+               rounded_corners: Union[bool, list] = [True, True, True, True],
+               shadows: Union[bool, list] = [True, True, False, False],
+               hanging: bool = False) -> pygame.Surface:
+        if object_id == "#checked_checkbox":
+            return CustomButton.checkbox(checked=True, hover=hover, unavailable=unavailable)
+        if object_id == "#unchecked_checkbox":
+            return CustomButton.checkbox(checked=False, hover=hover, unavailable=unavailable)
+    @staticmethod
+    def checkbox(checked: bool = False, 
+                 hover: bool = False,
+                 unavailable: bool = False) -> pygame.Surface:
+        surface = pygame.Surface((34, 34), pygame.SRCALPHA)
+        surface = surface.convert_alpha()
+        inner_button = Button.new((22, 22), "", unavailable=unavailable, hover=hover, shadows=[True, False, True, False])
+        surface.blit(inner_button, (6, 6))
+        if checked:
+            surface.blit(_Symbol.custom["{CHECKMARK}"], (10, 2))
+        return surface
 
 class pyggui_UIImage(pygame_gui.elements.UIImage):
     def __init__(self,
