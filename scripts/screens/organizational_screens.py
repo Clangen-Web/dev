@@ -118,7 +118,7 @@ class StartScreen(Screens):
                 elif platform.system() == 'Linux':
                     subprocess.Popen(['xdg-open', "https://twitter.com/OfficialClangen"])
         elif event.type == pygame.KEYDOWN and game.settings['keybinds']:
-            if (event.key == pygame.K_RETURN or event.key == pygame.K_SPACE) and self.continue_button.is_enabled:
+            if (event.key == pygame.K_RETURN or event.key == pygame.K_SPACE) and self.continue_button.button.is_enabled:
                 self.change_screen('clan screen')
 
     def on_use(self):
