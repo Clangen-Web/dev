@@ -26,6 +26,7 @@ from requests.exceptions import ConnectionError, HTTPError
 from scripts.cat.cats import Cat
 from scripts.game_structure.image_button import UIImageButton
 from scripts.game_structure.ui_button import UIButton
+from scripts.game_structure.ui_button import UIButton
 from scripts.utility import get_text_box_theme, scale, quit  # pylint: disable=redefined-builtin
 import pygame_gui
 from scripts.game_structure.game_essentials import game, screen, screen_x, screen_y, MANAGER

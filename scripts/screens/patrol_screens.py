@@ -10,6 +10,7 @@ from scripts.utility import get_text_box_theme, scale, get_personality_compatibi
     get_special_snippet_list, process_text, adjust_prey_abbr, adjust_patrol_text
 from scripts.game_structure.image_button import UIImageButton, UISpriteButton
 from scripts.game_structure.ui_button import UIButton
+from scripts.game_structure.ui_button import UIButton
 from scripts.patrol import patrol
 from scripts.cat.cats import Cat
 from scripts.game_structure.game_essentials import game, MANAGER

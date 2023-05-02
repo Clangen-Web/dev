@@ -1231,7 +1231,7 @@ class ChooseMateScreen(Screens):
                             object_id="#arrow_right_button",
                             manager=MANAGER)
 
-        self.previous_cat_button = UIImageButton(scale(pygame.Rect((50, 50), (306, 60))), "",
+        self.previous_cat_button = UIButton(scale(pygame.Rect((50, 50), (306, 60))), "",
                                                  object_id="#previous_cat_button")
         self.next_cat_button = UIButton(scale(pygame.Rect((1244, 50), (306, 60))), "",
                                              object_id="#next_cat_button")
