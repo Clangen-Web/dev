@@ -74,6 +74,7 @@ import re
 import i18n
 from typing import Union, Tuple, Dict, Optional
 import scripts.game_structure.image_button
+from scripts.game_structure.game_essentials import MANAGER
 
 try:
     import ujson
@@ -376,7 +377,7 @@ class ButtonCache():
 class UIButton(scripts.game_structure.image_button.UISpriteButton):
     """TODO: document"""
     def __init__(self, relative_rect, text = "", visible=1, starting_height=1, object_id=None,
-                 manager=None, container=None, tool_tip_text=None):
+                 manager=MANAGER, container=None, tool_tip_text=None):
         """TODO: document"""
         self.relative_rect = relative_rect
         self.id = object_id
@@ -407,7 +408,7 @@ class UIButton(scripts.game_structure.image_button.UISpriteButton):
         self.image.disable()
         # The transparent button. This a subclass that UIButton that also hold the cat_id.
         self.button = CatButton(relative_rect, visible=visible,
-                                starting_height=starting_height,
+                                starting_height=starting_height+1,
                                 manager=manager, tool_tip_text=tool_tip_text,
                                 internal=self, container=container)
         self.visible = visible
@@ -437,7 +438,7 @@ class CatButton(pygame_gui.elements.UIButton):
                  relative_rect,
                  visible=True,
                  starting_height=1,
-                 manager=None,
+                 manager=MANAGER,
                  tool_tip_text=None,
                  container=None,
                  internal=None) -> None:
@@ -504,7 +505,7 @@ class CatButton(pygame_gui.elements.UIButton):
                                         text=self.internal.text,
                                         rounded_corners=self.rounded_corners,
                                         hanging=self.hanging, shadows=self.shadows,
-                                        hover=True if self.hover else False)
+                                        hover=self.hover)
         if cache:
             sprite = cache['surface']
         else:
@@ -513,12 +514,12 @@ class CatButton(pygame_gui.elements.UIButton):
                                                          text=self.internal.text,
                                                          rounded_corners=self.rounded_corners,
                                                          hanging=self.hanging, shadows=self.shadows,
-                                                         hover=True if self.hover else False),
+                                                         hover=self.hover),
                                               size=self.relative_rect.size,
                                               text=self.internal.text,
                                               rounded_corners=self.rounded_corners,
                                               hanging=self.hanging, shadows=self.shadows,
-                                              hover=True if self.hover else False)
+                                              hover=self.hover)
         self.internal.image.set_image(pygame.transform.scale(sprite, self.relative_rect.size))
         super().enable()
     def on_unhovered(self):
@@ -571,6 +572,7 @@ class RectButton():
             self.palette = Palette.unavailable
         elif hover:
             self.palette = Palette.hover
+            print("hover palette")
         else:
             self.palette = Palette.palette
         self.rounded_corners = rounded_corners

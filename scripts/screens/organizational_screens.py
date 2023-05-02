@@ -629,6 +629,12 @@ class SettingsScreen(Screens):
         elif event.type == pygame.KEYDOWN and game.settings['keybinds']:
             if event.key == pygame.K_ESCAPE:
                 self.change_screen('start screen')
+                self.save_settings()
+                try:
+                    game.save_settings()
+                except:
+                    SaveError(traceback.format_exc())
+                    self.change_screen("start screen")
             elif event.key == pygame.K_RIGHT:
                 if self.sub_menu == 'general':
                     self.open_relation_settings()
