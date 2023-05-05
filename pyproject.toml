@@ -13,7 +13,7 @@ repository = "https://github.com/Thlumyn/clangen/"
 keywords = ["warriorcats", "fanedit", "game", "pygame"]
 
 [tool.poetry.dependencies]
-python = ">=3.7.2,<3.12"
+python = ">=3.10.11,<3.12"
 pygame-ce = "^2.2.1"
 ujson = "^5.7.0"
 pygame-gui = "0.6.9"
@@ -36,6 +36,7 @@ pyinstaller = "^5.10.1"
 pillow = "^9.5.0"
 setuptools = "^67.7.2"
 wheel = "^0.40.0"
+pygbag = "0.6.6"
 
 
 [tool.poetry.extras]

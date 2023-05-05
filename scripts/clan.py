@@ -18,7 +18,10 @@ from scripts.cat.history import History
 from scripts.events_module.generate_events import OngoingEvent
 from scripts.housekeeping.datadir import get_save_dir
 
-import ujson
+try:
+    import ujson
+except:
+    import json as ujson
 
 from scripts.game_structure.game_essentials import game
 from scripts.housekeeping.version import get_version_info, SAVE_VERSION_NUMBER

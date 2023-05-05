@@ -13,7 +13,10 @@ import traceback
 from scripts.cat.history import History
 from scripts.patrol import Patrol
 
-import ujson
+try:
+    import ujson
+except:
+    import json as ujson
 
 from scripts.cat.names import names
 from scripts.cat.cats import Cat, cat_class

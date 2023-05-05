@@ -1,6 +1,9 @@
 import random
 
-import ujson
+try:
+    import ujson
+except:
+    import json as ujson
 
 from scripts.game_structure.game_essentials import game
 

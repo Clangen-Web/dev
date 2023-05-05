@@ -3,11 +3,16 @@ import pygame_gui
 
 from scripts.housekeeping.datadir import get_save_dir, get_temp_dir
 
-import ujson
+try:
+    import ujson
+except:
+    import json as ujson
 import os
 from shutil import move as shutil_move
 from ast import literal_eval
 import traceback
+
+import scripts.platformwrapper as web
 
 pygame.init()
 
@@ -650,23 +655,26 @@ else:
 
 def load_manager(res: tuple):
     # initialize pygame_gui manager, and load themes
-    manager = pygame_gui.ui_manager.UIManager(res, 'resources/defaults.json', enable_live_theme_updates=False)
-    manager.add_font_paths(
-        font_name='notosans',
-        regular_path='resources/fonts/NotoSans-Medium.ttf',
-        bold_path='resources/fonts/NotoSans-ExtraBold.ttf',
-        italic_path='resources/fonts/NotoSans-MediumItalic.ttf',
-        bold_italic_path='resources/fonts/NotoSans-ExtraBoldItalic.ttf'
-    )
+    if web.is_web:
+        manager = pygame_gui.ui_manager.UIManager(res, 'resources/web_defaults.json', enable_live_theme_updates=False)
+    else:
+        manager = pygame_gui.ui_manager.UIManager(res, 'resources/defaults.json', enable_live_theme_updates=False)
+        manager.add_font_paths(
+            font_name='notosans',
+            regular_path='resources/fonts/NotoSans-Medium.ttf',
+            bold_path='resources/fonts/NotoSans-ExtraBold.ttf',
+            italic_path='resources/fonts/NotoSans-MediumItalic.ttf',
+            bold_italic_path='resources/fonts/NotoSans-ExtraBoldItalic.ttf'
+        )
 
     if res[0] > 800:
-        manager.get_theme().load_theme('resources/defaults.json')
-        manager.get_theme().load_theme('resources/buttons.json')
-        manager.get_theme().load_theme('resources/text_boxes.json')
-        manager.get_theme().load_theme('resources/text_boxes_dark.json')
-        manager.get_theme().load_theme('resources/vertical_scroll_bar.json')
-        manager.get_theme().load_theme('resources/windows.json')
-        manager.get_theme().load_theme('resources/tool_tips.json')
+        manager.get_theme().load_theme(f'resources/{"web_" if web.is_web else ""}defaults.json')
+        manager.get_theme().load_theme(f'resources/{"web_" if web.is_web else ""}buttons.json')
+        manager.get_theme().load_theme(f'resources/{"web_" if web.is_web else ""}text_boxes.json')
+        manager.get_theme().load_theme(f'resources/{"web_" if web.is_web else ""}text_boxes_dark.json')
+        manager.get_theme().load_theme(f'resources/vertical_scroll_bar.json')
+        manager.get_theme().load_theme(f'resources/windows.json')
+        manager.get_theme().load_theme(f'resources/{"web_" if web.is_web else ""}tool_tips.json')
 
         manager.preload_fonts([
             {'name': 'notosans', 'point_size': 30, 'style': 'italic'},
@@ -678,13 +686,13 @@ def load_manager(res: tuple):
 
 
     else:
-        manager.get_theme().load_theme('resources/defaults_small.json')
-        manager.get_theme().load_theme('resources/buttons_small.json')
-        manager.get_theme().load_theme('resources/text_boxes_small.json')
-        manager.get_theme().load_theme('resources/text_boxes_dark_small.json')
-        manager.get_theme().load_theme('resources/vertical_scroll_bar.json')
-        manager.get_theme().load_theme('resources/windows.json')
-        manager.get_theme().load_theme('resources/tool_tips_small.json')
+        manager.get_theme().load_theme(f'resources/{"web_" if web.is_web else ""}defaults_small.json')
+        manager.get_theme().load_theme(f'resources/{"web_" if web.is_web else ""}buttons_small.json')
+        manager.get_theme().load_theme(f'resources/{"web_" if web.is_web else ""}text_boxes_small.json')
+        manager.get_theme().load_theme(f'resources/{"web_" if web.is_web else ""}text_boxes_dark_small.json')
+        manager.get_theme().load_theme(f'resources/vertical_scroll_bar.json')
+        manager.get_theme().load_theme(f'resources/windows.json')
+        manager.get_theme().load_theme(f'resources/{"web_" if web.is_web else ""}tool_tips_small.json')
 
         manager.preload_fonts([
             {'name': 'notosans', 'point_size': 11, 'style': 'bold'},

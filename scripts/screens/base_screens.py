@@ -8,6 +8,7 @@ from scripts.game_structure import image_cache
 from scripts.game_structure.image_button import UIImageButton
 import pygame_gui
 from scripts.game_structure.windows import SaveCheck
+import scripts.platformwrapper as web
 
 class Screens():
     game_screen = screen
@@ -105,7 +106,8 @@ class Screens():
 
         game.switches['cur_screen'] = new_screen
         game.switch_screens = True
-        game.rpc.update_rpc.set()
+        if not web.is_web:
+            game.rpc.update_rpc.set()
         
 
     def __init__(self, name=None):

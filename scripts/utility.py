@@ -10,10 +10,15 @@ from random import choice, choices, randint, random, sample
 import re
 import pygame
 
+import scripts.platformwrapper as web
+
 from scripts.cat.history import History
 from scripts.cat.names import names
 
-import ujson
+try:
+    import ujson
+except:
+    import json as ujson
 import logging
 
 import datetime
@@ -1518,12 +1523,15 @@ def quit(savesettings=False, clearevents=False):
         game.save_settings()
     if clearevents:
         game.cur_events_list.clear()
-    game.rpc.close_rpc.set()
-    game.rpc.update_rpc.set()
+    
+    if not web.is_web:
+        game.rpc.close_rpc.set()
+        game.rpc.update_rpc.set()
+        if game.rpc.is_alive():
+            game.rpc.join(1)
     pygame.display.quit()
     pygame.quit()
-    if game.rpc.is_alive():
-        game.rpc.join(1)
+    
     sys_exit()
 
 

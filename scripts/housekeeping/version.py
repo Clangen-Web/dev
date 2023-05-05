@@ -4,7 +4,9 @@ import subprocess
 import sys
 from configparser import ConfigParser
 
-from platformdirs import user_data_dir
+import scripts.platformwrapper as web
+if not web.is_web:
+    from platformdirs import user_data_dir
 
 logger = logging.getLogger(__name__)
 
@@ -24,7 +26,10 @@ def get_version_info():
         if not getattr(sys, 'frozen', False):
             is_source_build = True
 
-        if os.path.exists("version.ini"):
+        if web.is_web:
+            get_version_info.instance = VersionInfo(True, 'web', 'web', 'web', False, True)
+            return get_version_info.instance
+        elif os.path.exists("version.ini"):
             version_ini = ConfigParser()
             version_ini.read("version.ini", encoding="utf-8")
             version_number = version_ini.get("DEFAULT", "version_number")

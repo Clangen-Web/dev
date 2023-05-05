@@ -20,9 +20,10 @@ from html import escape
 
 import pygame
 
+import scripts.platformwrapper as web
+
 from .base_screens import Screens
 
-from requests.exceptions import ConnectionError, HTTPError
 from scripts.cat.cats import Cat
 from scripts.game_structure.image_button import UIImageButton
 from scripts.utility import get_text_box_theme, scale, quit  # pylint: disable=redefined-builtin
@@ -32,9 +33,16 @@ from scripts.game_structure.windows import DeleteCheck, UpdateAvailablePopup, Ch
 from scripts.game_structure.discord_rpc import _DiscordRPC
 from scripts.game_structure import image_cache
 from ..housekeeping.datadir import get_data_dir, get_cache_dir
-from ..housekeeping.update import has_update, UpdateChannel, get_latest_version_number
+import scripts.platformwrapper as web
+if not web.is_web:
+    from requests.exceptions import ConnectionError, HTTPError
+    from ..housekeeping.update import has_update, UpdateChannel, get_latest_version_number
+import scripts.platformwrapper as web
 
-import ujson
+try:
+    import ujson
+except:
+    import json as ujson
 
 from ..housekeeping.version import get_version_info
 
@@ -245,28 +253,32 @@ class StartScreen(Screens):
                                            object_id="#update_button", manager=MANAGER)
         self.update_button.visible = 0
 
-        try:
-            global has_checked_for_update
-            global update_available
-            if not get_version_info().is_source_build and not get_version_info().is_itch and get_version_info().upstream.lower() == "Thlumyn/clangen".lower() and \
-                    game.settings['check_for_updates'] and not has_checked_for_update:
-                if has_update(UpdateChannel(get_version_info().release_channel)):
-                    update_available = True
-                    show_popup = True
-                    if os.path.exists(f"{get_cache_dir()}/suppress_update_popup"):
-                        with open(f"{get_cache_dir()}/suppress_update_popup", 'r') as read_file:
-                            if read_file.readline() == get_latest_version_number():
-                                show_popup = False
+        global has_checked_for_update
+        global update_available
+        if not web.is_web:
+            try:
+                if not get_version_info().is_source_build and not get_version_info().is_itch and get_version_info().upstream.lower() == "Thlumyn/clangen".lower() and \
+                        game.settings['check_for_updates'] and not has_checked_for_update:
+                    if has_update(UpdateChannel(get_version_info().release_channel)):
+                        update_available = True
+                        show_popup = True
+                        if os.path.exists(f"{get_cache_dir()}/suppress_update_popup"):
+                            with open(f"{get_cache_dir()}/suppress_update_popup", 'r') as read_file:
+                                if read_file.readline() == get_latest_version_number():
+                                    show_popup = False
 
-                    if show_popup:
-                        UpdateAvailablePopup(game.switches['last_screen'], show_checkbox=True)
+                        if show_popup:
+                            UpdateAvailablePopup(game.switches['last_screen'], show_checkbox=True)
 
-                has_checked_for_update = True
+                    has_checked_for_update = True
 
-            if update_available:
-                self.update_button.visible = 1
-        except (ConnectionError, HTTPError):
-            logger.exception("Failed to check for update")
+                if update_available:
+                    self.update_button.visible = 1
+            except (ConnectionError, HTTPError):
+                logger.exception("Failed to check for update")
+        else:
+            has_checked_for_update = True
+            update_available = False
 
         if game.settings['show_changelog']:
             show_changelog = True
@@ -651,6 +663,8 @@ class SettingsScreen(Screens):
                     if self.sub_menu == 'language':
                         game.settings['language'] = key
                     else:
+                        if key == 'discord' and web.is_web:
+                            return
                         game.switch_setting(key)
                     self.settings_changed = True
                     self.update_save_button()

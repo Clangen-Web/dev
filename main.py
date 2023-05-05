@@ -20,13 +20,17 @@ import shutil
 import sys
 import time
 import os
+import i18n
+import asyncio
+
+import scripts.platformwrapper as web
+
 
 from scripts.housekeeping.log_cleanup import prune_logs
 from scripts.housekeeping.stream_duplexer import UnbufferedStreamDuplexer
 from scripts.housekeeping.datadir import get_log_dir, setup_data_dir
 from scripts.housekeeping.version import get_version_info, VERSION_NAME
 
-from scripts.debugmode import debugmode
 
 directory = os.path.dirname(__file__)
 if directory:
@@ -111,154 +115,163 @@ else:
 print("Version Name: ", VERSION_NAME)
 print("Running on commit " + get_version_info().version_number)
 
-# Load game
-from scripts.game_structure.load_cat import load_cats, version_convert
-from scripts.game_structure.windows import SaveCheck
-from scripts.game_structure.game_essentials import game, MANAGER, screen
-from scripts.game_structure.discord_rpc import _DiscordRPC
-from scripts.cat.sprites import sprites
-from scripts.clan import clan_class
-from scripts.utility import get_text_box_theme, quit, scale  # pylint: disable=redefined-builtin
-import pygame_gui
-import pygame
+
+
+async def main():
+    # Load game
+    from scripts.game_structure.load_cat import load_cats, version_convert
+    from scripts.game_structure.windows import SaveCheck
+    from scripts.game_structure.game_essentials import game, MANAGER, screen
+    from scripts.game_structure.discord_rpc import _DiscordRPC
+    from scripts.cat.sprites import sprites
+    from scripts.clan import clan_class
+    from scripts.utility import get_text_box_theme, quit, scale  # pylint: disable=redefined-builtin
+    from scripts.debugmode import debugmode
+    import pygame_gui
+    import pygame
 
 
 
 
-# import all screens for initialization (Note - must be done after pygame_gui manager is created)
-from scripts.screens.all_screens import start_screen # pylint: disable=ungrouped-imports
+    # import all screens for initialization (Note - must be done after pygame_gui manager is created)
+    from scripts.screens.all_screens import start_screen # pylint: disable=ungrouped-imports
 
-# P Y G A M E
-clock = pygame.time.Clock()
-pygame.display.set_icon(pygame.image.load('resources/images/icon.png'))
+    # P Y G A M E
+    clock = pygame.time.Clock()
+    pygame.display.set_icon(pygame.image.load('resources/images/icon.png'))
 
-# LOAD cats & clan
-clan_list = game.read_clans()
-if clan_list:
-    game.switches['clan_list'] = clan_list
-    try:
-        load_cats()
-        version_info = clan_class.load_clan()
-        version_convert(version_info)
-    except Exception as e:
-        logging.exception("File failed to load")
-        if not game.switches['error_message']:
-            game.switches[
-                'error_message'] = 'There was an error loading the cats file!'
-            game.switches['traceback'] = e
-
-
-# LOAD settings
-
-sprites.load_scars()
-
-start_screen.screen_switches()
-
-if game.settings['fullscreen']:
-    version_number = pygame_gui.elements.UILabel(
-        pygame.Rect((1500, 1350), (-1, -1)), get_version_info().version_number[0:8],
-        object_id=get_text_box_theme())
-    # Adjust position
-    version_number.set_position(
-        (1600 - version_number.get_relative_rect()[2] - 8,
-         1400 - version_number.get_relative_rect()[3]))
-else:
-    version_number = pygame_gui.elements.UILabel(
-        pygame.Rect((700, 650), (-1, -1)), get_version_info().version_number[0:8],
-        object_id=get_text_box_theme())
-    # Adjust position
-    version_number.set_position(
-        (800 - version_number.get_relative_rect()[2] - 8,
-        700 - version_number.get_relative_rect()[3]))
-
-if get_version_info().is_source_build or get_version_info().is_dev():
-    dev_watermark = pygame_gui.elements.UILabel(
-        scale(pygame.Rect((1050, 1321), (600, 100))),
-        "Dev Build:",
-        object_id="#dev_watermark"
-    )
-
-game.rpc = _DiscordRPC("1076277970060185701", daemon=True)
-game.rpc.start()
-game.rpc.start_rpc.set()
+    # LOAD cats & clan
+    clan_list = game.read_clans()
+    if clan_list:
+        game.switches['clan_list'] = clan_list
+        try:
+            load_cats()
+            version_info = clan_class.load_clan()
+            version_convert(version_info)
+        except Exception as e:
+            logging.exception("File failed to load")
+            if not game.switches['error_message']:
+                game.switches[
+                    'error_message'] = 'There was an error loading the cats file!'
+                game.switches['traceback'] = e
 
 
-cursor_img = pygame.image.load('resources/images/cursor.png').convert_alpha()
-cursor = pygame.cursors.Cursor((9,0), cursor_img)
-disabled_cursor = pygame.cursors.Cursor(pygame.SYSTEM_CURSOR_ARROW)
+    # LOAD settings
+
+    sprites.load_scars()
+
+    start_screen.screen_switches()
+
+    if game.settings['fullscreen']:
+        version_number = pygame_gui.elements.UILabel(
+            pygame.Rect((1500, 1350), (-1, -1)), get_version_info().version_number[0:8],
+            object_id=get_text_box_theme())
+        # Adjust position
+        version_number.set_position(
+            (1600 - version_number.get_relative_rect()[2] - 8,
+            1400 - version_number.get_relative_rect()[3]))
+    else:
+        version_number = pygame_gui.elements.UILabel(
+            pygame.Rect((700, 650), (-1, -1)), get_version_info().version_number[0:8],
+            object_id=get_text_box_theme())
+        # Adjust position
+        version_number.set_position(
+            (800 - version_number.get_relative_rect()[2] - 8,
+            700 - version_number.get_relative_rect()[3]))
+
+    if get_version_info().is_source_build or get_version_info().is_dev():
+        dev_watermark = pygame_gui.elements.UILabel(
+            scale(pygame.Rect((1050, 1321), (600, 100))),
+            "Dev Build:",
+            object_id="#dev_watermark"
+        )
+
+    if not web.is_web:
+        game.rpc = _DiscordRPC("1076277970060185701", daemon=True)
+        game.rpc.start()
+        game.rpc.start_rpc.set()
+
+
+    cursor_img = pygame.image.load('resources/images/cursor.png').convert_alpha()
+    cursor = pygame.cursors.Cursor((9,0), cursor_img)
+    disabled_cursor = pygame.cursors.Cursor(pygame.SYSTEM_CURSOR_ARROW)
 
 
 
 
 
-while True:
-    time_delta = clock.tick(30) / 1000.0
-    if game.switches['cur_screen'] not in ['start screen']:
-        if game.settings['dark mode']:
-            screen.fill((57, 50, 36))
-        else:
-            screen.fill((206, 194, 168))
-
-    if game.settings['custom cursor']:
-        if pygame.mouse.get_cursor() == disabled_cursor:
-            pygame.mouse.set_cursor(cursor)
-    elif pygame.mouse.get_cursor() == cursor:
-        pygame.mouse.set_cursor(disabled_cursor)
-    # Draw screens
-    # This occurs before events are handled to stop pygame_gui buttons from blinking.
-    game.all_screens[game.current_screen].on_use()
-
-    # EVENTS
-    for event in pygame.event.get():
-        game.all_screens[game.current_screen].handle_event(event)
-
-        if event.type == pygame.QUIT:
-            # Dont display if on the start screen or there is no clan.
-            if (game.switches['cur_screen'] in ['start screen',
-                                                'switch clan screen',
-                                                'settings screen',
-                                                'info screen',
-                                                'make clan screen']
-                or not game.clan):
-                quit(savesettings=False)
+    while True:
+        time_delta = clock.tick(30) / 1000.0
+        if game.switches['cur_screen'] not in ['start screen']:
+            if game.settings['dark mode']:
+                screen.fill((57, 50, 36))
             else:
-                SaveCheck(game.switches['cur_screen'], False, None)
+                screen.fill((206, 194, 168))
 
+        if game.settings['custom cursor']:
+            if pygame.mouse.get_cursor() == disabled_cursor:
+                pygame.mouse.set_cursor(cursor)
+        elif pygame.mouse.get_cursor() == cursor:
+            pygame.mouse.set_cursor(disabled_cursor)
+        # Draw screens
+        # This occurs before events are handled to stop pygame_gui buttons from blinking.
+        game.all_screens[game.current_screen].on_use()
 
-        # MOUSE CLICK
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            game.clicked = True
+        # EVENTS
+        for event in pygame.event.get():
+            game.all_screens[game.current_screen].handle_event(event)
 
-            if MANAGER.visual_debug_active:
-                _ = pygame.mouse.get_pos()
-                if game.settings['fullscreen']:
-                    print(f"(x: {_[0]}, y: {_[1]})")
+            if event.type == pygame.QUIT:
+                # Dont display if on the start screen or there is no clan.
+                if (game.switches['cur_screen'] in ['start screen',
+                                                    'switch clan screen',
+                                                    'settings screen',
+                                                    'info screen',
+                                                    'make clan screen']
+                    or not game.clan):
+                    quit(savesettings=False)
                 else:
-                    print(f"(x: {_[0]*2}, y: {_[1]*2})")
-                del _
+                    SaveCheck(game.switches['cur_screen'], False, None)
 
-        # F2 turns toggles visual debug mode for pygame_gui, allowed for easier bug fixes.
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_F2:
-                debugmode.toggle_console()
 
-        MANAGER.process_events(event)
+            # MOUSE CLICK
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                game.clicked = True
+
+                if MANAGER.visual_debug_active:
+                    _ = pygame.mouse.get_pos()
+                    if game.settings['fullscreen']:
+                        print(f"(x: {_[0]}, y: {_[1]})")
+                    else:
+                        print(f"(x: {_[0]*2}, y: {_[1]*2})")
+                    del _
+
+            # F2 turns toggles visual debug mode for pygame_gui, allowed for easier bug fixes.
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_F2:
+                    debugmode.toggle_console()
+
+            MANAGER.process_events(event)
+        
+
+        MANAGER.update(time_delta)
+
+        # update
+        game.update_game()
+        if game.switch_screens:
+            game.all_screens[game.last_screen_forupdate].exit_screen()
+            game.all_screens[game.current_screen].screen_switches()
+            game.switch_screens = False
+
+
+        debugmode.update1(clock)
+        # END FRAME
+        MANAGER.draw_ui(screen)
+        debugmode.update2(screen)
+
+
+        pygame.display.update()
     
+        await asyncio.sleep(0)
 
-    MANAGER.update(time_delta)
-
-    # update
-    game.update_game()
-    if game.switch_screens:
-        game.all_screens[game.last_screen_forupdate].exit_screen()
-        game.all_screens[game.current_screen].screen_switches()
-        game.switch_screens = False
-
-
-    debugmode.update1(clock)
-    # END FRAME
-    MANAGER.draw_ui(screen)
-    debugmode.update2(screen)
-
-
-    pygame.display.update()
+asyncio.run(main())

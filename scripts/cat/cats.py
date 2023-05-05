@@ -9,7 +9,10 @@ from .history import History
 from ..housekeeping.datadir import get_save_dir
 from ..events_module.generate_events import GenerateEvents
 
-import ujson
+try:
+    import ujson
+except:
+    import json as ujson
 
 from .pelts import describe_appearance
 from .names import Name, names

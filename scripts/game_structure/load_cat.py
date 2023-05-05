@@ -4,7 +4,10 @@ from .game_essentials import game
 from ..cat.history import History
 from ..housekeeping.datadir import get_save_dir
 
-import ujson
+try:
+    import ujson
+except:
+    import json as ujson
 
 from re import sub
 from scripts.cat.cats import Cat

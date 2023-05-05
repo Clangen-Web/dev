@@ -3,7 +3,10 @@
 import random
 from random import choice, randint, choices
 
-import ujson
+try:
+    import ujson
+except:
+    import json as ujson
 
 from scripts.cat.history import History
 from scripts.clan import HERBS, Clan
