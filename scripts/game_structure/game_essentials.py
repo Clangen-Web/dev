@@ -241,6 +241,7 @@ class Game():
             # This section is reached is the file was not nullied. Move the file and return True
             os.makedirs(dir_name, exist_ok=True)
             shutil_move(temp_file_path, path)
+            web.pushdb()
             return
 
     def read_clans(self):

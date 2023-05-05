@@ -2,7 +2,7 @@ import os
 import platform
 
 from scripts.housekeeping.version import get_version_info
-
+import scripts.platformwrapper as web
 
 def setup_data_dir():
     os.makedirs(get_data_dir(), exist_ok=True)
@@ -25,6 +25,8 @@ def setup_data_dir():
 
 
 def get_data_dir():
+    if web.is_web:
+        return '/saves'
     if get_version_info().is_source_build:
         return '.'
 

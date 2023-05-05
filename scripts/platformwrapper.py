@@ -7,6 +7,18 @@ else:
     is_web = False
 del _platform
 
+class window:
+    @staticmethod
+    def get(key):
+        if not is_web:
+            return
+        return platform.window[key]
+    @staticmethod
+    def set(key, value):
+        if not is_web:
+            return
+        platform.window[key] = value
+
 def reload():
     if not is_web:
         return
@@ -21,9 +33,6 @@ def pulldb():
     if not is_web:
         return
     platform.window.FS.syncfs(True, platform.window.console.log)
-
-def _is_web():
-    return is_web
 
 def eval(code):
     if not is_web:

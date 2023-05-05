@@ -22,102 +22,146 @@ import time
 import os
 import i18n
 import asyncio
-
+import platform
 import scripts.platformwrapper as web
 
 
 from scripts.housekeeping.log_cleanup import prune_logs
 from scripts.housekeeping.stream_duplexer import UnbufferedStreamDuplexer
-from scripts.housekeeping.datadir import get_log_dir, setup_data_dir
+from scripts.housekeeping.datadir import get_log_dir, setup_data_dir, get_save_dir, get_data_dir
 from scripts.housekeeping.version import get_version_info, VERSION_NAME
 
-if not web.is_web:
-    directory = os.path.dirname(__file__)
-    if directory:
-        os.chdir(directory)
-
-
-if os.path.exists("auto-updated"):
-    print("Clangen starting, deleting auto-updated file")
-    os.remove("auto-updated")
-    shutil.rmtree("Downloads", ignore_errors=True)
-    print("Update Complete!")
-    print("New version: " + get_version_info().version_number)
-
-
-setup_data_dir()
-timestr = time.strftime("%Y%m%d_%H%M%S")
-
-
-stdout_file = open(get_log_dir() + f'/stdout_{timestr}.log', 'a')
-stderr_file = open(get_log_dir() + f'/stderr_{timestr}.log', 'a')
-sys.stdout = UnbufferedStreamDuplexer(sys.stdout, stdout_file)
-sys.stderr = UnbufferedStreamDuplexer(sys.stderr, stderr_file)
-
-# Setup logging
-import logging
-
-formatter = logging.Formatter(
-    "%(name)s - %(levelname)s - %(filename)s / %(funcName)s / %(lineno)d - %(message)s"
-    )
-
-
-# Logging for file
-timestr = time.strftime("%Y%m%d_%H%M%S")
-log_file_name = get_log_dir() + f"/clangen_{timestr}.log"
-file_handler = logging.FileHandler(log_file_name)
-file_handler.setFormatter(formatter)
-# Only log errors to file
-file_handler.setLevel(logging.ERROR)
-# Logging for console
-stream_handler = logging.StreamHandler()
-stream_handler.setFormatter(formatter)
-logging.root.addHandler(file_handler)
-logging.root.addHandler(stream_handler)
-
-
-prune_logs(logs_to_keep=10, retain_empty_logs=False)
-
-
-def log_crash(logtype, value, tb):
-    """
-    Log uncaught exceptions to file
-    """
-    logging.critical("Uncaught exception", exc_info=(logtype, value, tb))
-    sys.__excepthook__(type, value, tb)
-
-sys.excepthook = log_crash
-
-# if user is developing in a github codespace
-if os.environ.get('CODESPACES'):
-    print('')
-    print("Github codespace user!!! Sorry, but sound *may* not work :(")
-    print("SDL_AUDIODRIVER is dsl. This is to avoid ALSA errors, but it may disable sound.")
-    print('')
-    print("Web VNC:")
-    print(
-        f"https://{os.environ.get('CODESPACE_NAME')}-6080"
-        + f".{os.environ.get('GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN')}"
-        + "/?autoconnect=true&reconnect=true&password=clangen&resize=scale")
-    print("(use clangen in fullscreen mode for best results)")
-    print('')
-
-
-if get_version_info().is_source_build:
-    print("Running on source code")
-    if get_version_info().version_number == VERSION_NAME:
-        print("Failed to get git commit hash, using hardcoded version number instead.")
-        print("Hey testers! We recommend you use git to clone the repository, as it makes things easier for everyone.")  # pylint: disable=line-too-long
-        print("There are instructions at https://discord.com/channels/1003759225522110524/1054942461178421289/1078170877117616169")  # pylint: disable=line-too-long
-else:
-    print("Running on PyInstaller build")
-
-print("Version Name: ", VERSION_NAME)
-print("Running on commit " + get_version_info().version_number)
-
-
-
 async def main():
+
+    if not web.is_web:
+        directory = os.path.dirname(__file__)
+        if directory:
+            os.chdir(directory)
+
+
+    if os.path.exists("auto-updated"):
+        print("Clangen starting, deleting auto-updated file")
+        os.remove("auto-updated")
+        shutil.rmtree("Downloads", ignore_errors=True)
+        print("Update Complete!")
+        print("New version: " + get_version_info().version_number)
+
+    if web.is_web:
+        print("Loading IndexedDB...")
+        web.eval("window.fs_loaded = false")
+        os.mkdir(get_data_dir())
+        web.init_idbfs()
+        web.eval("""
+        FS.mount(window.IDBFS, {'root': '.'}, '""" + get_data_dir() + """')
+        FS.syncfs(true, (err) => {
+            if (err) {console.log(err)}
+            else {
+                console.log('IndexedDB mounted and synced!')
+                window.fs_loaded = true
+            }
+        })
+
+        window.onbeforeunload = async ()=>{
+            FS.syncfs(false, (err) => {console.log(err)})
+        }
+        """)
+
+        while web.window.get("fs_loaded") is False: # pylint: disable=no-member
+            print("Waiting for fs to load...")
+            await asyncio.sleep(0.1)
+
+        
+        if platform.window.localStorage.getItem("hasMigrated") is None: # pylint: disable=no-member
+            print("Migrating from localStorage to IndexedDB")
+            
+            for i in range(platform.window.localStorage.length): # pylint: disable=no-member
+                key = platform.window.localStorage.key(i) # pylint: disable=no-member
+                value = platform.window.localStorage.getItem(key) # pylint: disable=no-member
+                
+                if key in ['hasMigrated', '/', 'currentclan', 'clanlist.txt', '__test__']:
+                    continue
+                os.makedirs(os.path.dirname(f"{get_save_dir()}/{key}"), exist_ok=True)
+                with open(f"{get_save_dir()}/{key}", "w") as f:
+                    f.write(value)
+            platform.window.localStorage.setItem("hasMigrated", "true") # pylint: disable=no-member
+
+            web.pushdb()
+            print("Migration complete!")
+    
+    setup_data_dir()
+    timestr = time.strftime("%Y%m%d_%H%M%S")
+
+
+    stdout_file = open(get_log_dir() + f'/stdout_{timestr}.log', 'a')
+    stderr_file = open(get_log_dir() + f'/stderr_{timestr}.log', 'a')
+    sys.stdout = UnbufferedStreamDuplexer(sys.stdout, stdout_file)
+    sys.stderr = UnbufferedStreamDuplexer(sys.stderr, stderr_file)
+
+    # Setup logging
+    import logging
+
+    formatter = logging.Formatter(
+        "%(name)s - %(levelname)s - %(filename)s / %(funcName)s / %(lineno)d - %(message)s"
+        )
+
+
+    # Logging for file
+    timestr = time.strftime("%Y%m%d_%H%M%S")
+    log_file_name = get_log_dir() + f"/clangen_{timestr}.log"
+    file_handler = logging.FileHandler(log_file_name)
+    file_handler.setFormatter(formatter)
+    # Only log errors to file
+    file_handler.setLevel(logging.ERROR)
+    # Logging for console
+    stream_handler = logging.StreamHandler()
+    stream_handler.setFormatter(formatter)
+    logging.root.addHandler(file_handler)
+    logging.root.addHandler(stream_handler)
+
+
+    prune_logs(logs_to_keep=10, retain_empty_logs=False)
+
+
+    def log_crash(logtype, value, tb):
+        """
+        Log uncaught exceptions to file
+        """
+        logging.critical("Uncaught exception", exc_info=(logtype, value, tb))
+        sys.__excepthook__(type, value, tb)
+
+    sys.excepthook = log_crash
+
+    # if user is developing in a github codespace
+    if os.environ.get('CODESPACES'):
+        print('')
+        print("Github codespace user!!! Sorry, but sound *may* not work :(")
+        print("SDL_AUDIODRIVER is dsl. This is to avoid ALSA errors, but it may disable sound.")
+        print('')
+        print("Web VNC:")
+        print(
+            f"https://{os.environ.get('CODESPACE_NAME')}-6080"
+            + f".{os.environ.get('GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN')}"
+            + "/?autoconnect=true&reconnect=true&password=clangen&resize=scale")
+        print("(use clangen in fullscreen mode for best results)")
+        print('')
+
+
+    if get_version_info().is_source_build:
+        print("Running on source code")
+        if get_version_info().version_number == VERSION_NAME:
+            print("Failed to get git commit hash, using hardcoded version number instead.")
+            print("Hey testers! We recommend you use git to clone the repository, as it makes things easier for everyone.")  # pylint: disable=line-too-long
+            print("There are instructions at https://discord.com/channels/1003759225522110524/1054942461178421289/1078170877117616169")  # pylint: disable=line-too-long
+    else:
+        print("Running on PyInstaller build")
+
+    print("Version Name: ", VERSION_NAME)
+    print("Running on commit " + get_version_info().version_number)
+
+
+
+
+
     # Load game
     from scripts.game_structure.load_cat import load_cats, version_convert
     from scripts.game_structure.windows import SaveCheck

@@ -6,7 +6,18 @@ from pygame_gui.core.utility import translate
 from scripts.game_structure import image_cache
 import html
 import scripts.platformwrapper as web
+if web.is_web:
+    import json as ujson
+else:
+    import ujson
 
+theme = ujson.load(open("resources/buttons.json"))
+
+def get_image(type: str, combined_element_ids: list[str]):
+    combined_element_ids = [id for id in combined_element_ids if '#' in id][0]
+    if theme.get(combined_element_ids) is None or theme[combined_element_ids]["images"].get(type) is None:
+        raise LookupError
+    return pygame.image.load(theme[combined_element_ids]["images"][type]["path"]).convert_alpha()
 
 class UIImageButton(pygame_gui.elements.UIButton):
     """Subclass of pygame_gui's button class. This allows for auto-scaling of the
@@ -16,7 +27,7 @@ class UIImageButton(pygame_gui.elements.UIButton):
         changed = False
         normal_image = None
         try:
-            normal_image = self.ui_theme.get_image('normal_image', self.combined_element_ids)
+            normal_image = get_image('normal_image', self.combined_element_ids)
             normal_image = pygame.transform.scale(normal_image, self.relative_rect.size)  # auto-rescale the image
         except LookupError:
             normal_image = None
