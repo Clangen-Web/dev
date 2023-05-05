@@ -75,6 +75,7 @@ import i18n
 from typing import Union, Tuple, Dict, Optional
 import scripts.game_structure.image_button
 from scripts.game_structure.game_essentials import MANAGER
+from scripts.platformwrapper import is_web
 
 try:
     import ujson
@@ -86,12 +87,8 @@ DEBUG = False
 FONT = pygame.font.Font('resources/fonts/clangen.ttf', 16)
 COLOR = (239, 229, 206)
 
-PLATFORM = None
-from sys import platform
-if platform == "emscripten":
-    PLATFORM = "web"
+if is_web:
     FONT = pygame.font.SysFont(None, 24)
-del platform
 
 class _Language():
     """Class for rendering button text in other languages, from languages/.*/buttons.json"""
@@ -523,7 +520,7 @@ class CatButton(pygame_gui.elements.UIButton):
         self.internal.image.set_image(pygame.transform.scale(sprite, self.relative_rect.size))
         super().on_unhovered()
 
-if PLATFORM == "web":
+if is_web:
     _Symbol.populate()
 else:
     _Symbol.__init__()
