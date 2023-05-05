@@ -210,22 +210,41 @@ class StartScreen(Screens):
 
         self.error_box.disable()
 
-        self.error_label = pygame_gui.elements.UITextBox(
-            "",
-            scale(pygame.Rect((275, 370), (770, 720))),
-            object_id="#text_box_22_horizleft",
-            manager=MANAGER,
-            starting_height=3)
+        if web.is_web:
+            self.error_label = pygame_gui.elements.UITextBox( # pylint: disable=unexpected-keyword-arg
+                "",
+                scale(pygame.Rect((275, 370), (770, 720))),
+                object_id="#text_box_22_horizleft",
+                manager=MANAGER,
+                layer_starting_height=3)
+        else:
+            self.error_label = pygame_gui.elements.UITextBox(
+                "",
+                scale(pygame.Rect((275, 370), (770, 720))),
+                object_id="#text_box_22_horizleft",
+                manager=MANAGER,
+                starting_height=3)
 
-        self.error_gethelp = pygame_gui.elements.UITextBox(
-            "Please join the Discord server and ask for technical support. "
-            "We\'ll be happy to help! Please include the error message and the traceback below (if available). "
-            '<br><a href="https://discord.gg/clangen">Discord</a>',  # pylint: disable=line-too-long
-            scale(pygame.Rect((1055, 430), (350, 600))),
-            object_id="#text_box_22_horizleft",
-            starting_height=3,
-            manager=MANAGER
-        )
+        if web.is_web:
+            self.error_gethelp = pygame_gui.elements.UITextBox( # pylint: disable=unexpected-keyword-arg
+                "Please join the Discord server and ask for technical support. "
+                "We\'ll be happy to help! Please include the error message and the traceback below (if available). "
+                '<br><a href="https://discord.gg/clangen">Discord</a>',  # pylint: disable=line-too-long
+                scale(pygame.Rect((1055, 430), (350, 600))),
+                object_id="#text_box_22_horizleft",
+                layer_starting_height=3,
+                manager=MANAGER
+            )
+        else:
+            self.error_gethelp = pygame_gui.elements.UITextBox(
+                "Please join the Discord server and ask for technical support. "
+                "We\'ll be happy to help! Please include the error message and the traceback below (if available). "
+                '<br><a href="https://discord.gg/clangen">Discord</a>',  # pylint: disable=line-too-long
+                scale(pygame.Rect((1055, 430), (350, 600))),
+                object_id="#text_box_22_horizleft",
+                starting_height=3,
+                manager=MANAGER
+            )
 
         self.open_data_directory_button = UIImageButton(
             scale(pygame.Rect((1040, 1020), (320, 60))),

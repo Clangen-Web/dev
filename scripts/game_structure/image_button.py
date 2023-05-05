@@ -5,6 +5,7 @@ from pygame_gui.core.text.text_box_layout import TextBoxLayout
 from pygame_gui.core.utility import translate
 from scripts.game_structure import image_cache
 import html
+import scripts.platformwrapper as web
 
 
 class UIImageButton(pygame_gui.elements.UIButton):
@@ -162,7 +163,20 @@ class UITextBoxTweaked(pygame_gui.elements.UITextBox):
 
         self.line_spaceing = line_spacing
 
-        super().__init__(html_text, relative_rect, manager=manager, container=container,
+        if web.is_web:
+            super().__init__(html_text, relative_rect, manager=manager, container=container, # pylint: disable=unexpected-keyword-arg
+                         layer_starting_height=starting_height,
+                         wrap_to_height=wrap_to_height,
+                         parent_element=parent_element,
+                         anchors=anchors,
+                         object_id=object_id,
+                         visible=visible,
+                         pre_parsing_enabled=pre_parsing_enabled,
+                         text_kwargs=text_kwargs,
+                         allow_split_dashes=allow_split_dashes
+                         )
+        else:
+            super().__init__(html_text, relative_rect, manager=manager, container=container,
                          starting_height=starting_height,
                          wrap_to_height=wrap_to_height,
                          parent_element=parent_element,

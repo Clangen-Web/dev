@@ -655,17 +655,16 @@ else:
 
 def load_manager(res: tuple):
     # initialize pygame_gui manager, and load themes
-    if web.is_web:
-        manager = pygame_gui.ui_manager.UIManager(res, 'resources/web_defaults.json', enable_live_theme_updates=False)
-    else:
-        manager = pygame_gui.ui_manager.UIManager(res, 'resources/defaults.json', enable_live_theme_updates=False)
-        manager.add_font_paths(
-            font_name='notosans',
-            regular_path='resources/fonts/NotoSans-Medium.ttf',
-            bold_path='resources/fonts/NotoSans-ExtraBold.ttf',
-            italic_path='resources/fonts/NotoSans-MediumItalic.ttf',
-            bold_italic_path='resources/fonts/NotoSans-ExtraBoldItalic.ttf'
-        )
+
+    resloader = pygame_gui.core.resource_loaders.BlockingThreadedResourceLoader()
+    manager = pygame_gui.ui_manager.UIManager(res, f'resources/{"web_" if web.is_web else ""}defaults.json', enable_live_theme_updates=False)
+    manager.add_font_paths(
+        font_name='notosans',
+        regular_path='resources/fonts/NotoSans-Medium.ttf',
+        bold_path='resources/fonts/NotoSans-ExtraBold.ttf',
+        italic_path='resources/fonts/NotoSans-MediumItalic.ttf',
+        bold_italic_path='resources/fonts/NotoSans-ExtraBoldItalic.ttf'
+    )
 
     if res[0] > 800:
         manager.get_theme().load_theme(f'resources/{"web_" if web.is_web else ""}defaults.json')
