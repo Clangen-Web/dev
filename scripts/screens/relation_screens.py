@@ -8,6 +8,7 @@ from scripts.utility import get_personality_compatibility, get_text_box_theme, s
 from scripts.cat.cats import Cat
 from scripts.game_structure import image_cache
 from scripts.game_structure.image_button import UIImageButton, UISpriteButton, UIRelationStatusBar
+from scripts.game_structure.ui_button import UIButton
 from scripts.game_structure.game_essentials import game, screen, screen_x, screen_y, MANAGER
 from scripts.game_structure.windows import RelationshipLog
 
@@ -124,12 +125,12 @@ class ChooseMentorScreen(Screens):
                                                                "resources/images/mentor.png").convert_alpha(),
                                                            (343, 228)), manager=MANAGER)
 
-        self.previous_cat_button = UIImageButton(scale(pygame.Rect((50, 50), (306, 60))), "",
+        self.previous_cat_button = UIButton(scale(pygame.Rect((50, 50), (306, 60))), "",
                                                  object_id="#previous_cat_button")
-        self.next_cat_button = UIImageButton(scale(pygame.Rect((1244, 50), (306, 60))), "",
+        self.next_cat_button = UIButton(scale(pygame.Rect((1244, 50), (306, 60))), "",
                                              object_id="#next_cat_button")
-        self.back_button = UIImageButton(scale(pygame.Rect((50, 1290), (210, 60))), "", object_id="#back_button")
-        self.confirm_mentor = UIImageButton(scale(pygame.Rect((652, 620), (296, 60))), "",
+        self.back_button = UIButton(scale(pygame.Rect((50, 1290), (210, 60))), "", object_id="#back_button")
+        self.confirm_mentor = UIButton(scale(pygame.Rect((652, 620), (296, 60))), "",
                                             object_id="#confirm_mentor_button")
         if self.mentor is not None:
             self.current_mentor_warning = pygame_gui.elements.UITextBox(
@@ -587,11 +588,11 @@ class FamilyTreeScreen(Screens):
         self.current_group = None
         self.current_group_name = None
         # prev/next and back buttons
-        self.previous_cat_button = UIImageButton(scale(pygame.Rect((50, 50), (306, 60))), "",
+        self.previous_cat_button = UIButton(scale(pygame.Rect((50, 50), (306, 60))), "",
                                                  object_id="#previous_cat_button", manager=MANAGER)
-        self.next_cat_button = UIImageButton(scale(pygame.Rect((1244, 50), (306, 60))), "",
+        self.next_cat_button = UIButton(scale(pygame.Rect((1244, 50), (306, 60))), "",
                                              object_id="#next_cat_button", manager=MANAGER)
-        self.back_button = UIImageButton(scale(pygame.Rect((50, 120), (210, 60))), "",
+        self.back_button = UIButton(scale(pygame.Rect((50, 120), (210, 60))), "",
                                          object_id="#back_button", manager=MANAGER)
 
         # our container for the family tree, this will center itself based on visible relation group buttons
@@ -601,12 +602,12 @@ class FamilyTreeScreen(Screens):
             MANAGER)
 
         # now grab the other necessary UI elements
-        self.previous_group_page = UIImageButton(scale(pygame.Rect((941, 1281), (68, 68))),
+        self.previous_group_page = UIButton(scale(pygame.Rect((941, 1281), (68, 68))),
                                                  "",
                                                  object_id="#arrow_left_button",
                                                  manager=MANAGER)
         self.previous_group_page.disable()
-        self.next_group_page = UIImageButton(scale(pygame.Rect((1082, 1281), (68, 68))),
+        self.next_group_page = UIButton(scale(pygame.Rect((1082, 1281), (68, 68))),
                                              "",
                                              object_id="#arrow_right_button",
                                              manager=MANAGER)
@@ -1230,11 +1231,11 @@ class ChooseMateScreen(Screens):
                             object_id="#arrow_right_button",
                             manager=MANAGER)
 
-        self.previous_cat_button = UIImageButton(scale(pygame.Rect((50, 50), (306, 60))), "",
+        self.previous_cat_button = UIButton(scale(pygame.Rect((50, 50), (306, 60))), "",
                                                  object_id="#previous_cat_button")
-        self.next_cat_button = UIImageButton(scale(pygame.Rect((1244, 50), (306, 60))), "",
+        self.next_cat_button = UIButton(scale(pygame.Rect((1244, 50), (306, 60))), "",
                                              object_id="#next_cat_button")
-        self.back_button = UIImageButton(scale(pygame.Rect((50, 1290), (210, 60))), "", object_id="#back_button")
+        self.back_button = UIButton(scale(pygame.Rect((50, 1290), (210, 60))), "", object_id="#back_button")
 
         self.previous_page_button = UIImageButton(scale(pygame.Rect((630, 1160), (68, 68))), "",
                                                   object_id="#relation_list_previous")
@@ -1244,7 +1245,7 @@ class ChooseMateScreen(Screens):
                                                          object_id=get_text_box_theme())
 
         # This may be deleted and changed later.
-        self.toggle_mate = UIImageButton(scale(pygame.Rect((646, 620), (306, 60))), "",
+        self.toggle_mate = UIButton(scale(pygame.Rect((646, 620), (306, 60))), "",
                                          object_id="#confirm_mate_button")
 
         # The text will be changed as needed. This is used for both the "this pair can't have
@@ -1415,7 +1416,7 @@ class ChooseMateScreen(Screens):
 
         # Set the button to say "break-up"
         self.toggle_mate.kill()
-        self.toggle_mate = UIImageButton(scale(pygame.Rect((646, 620), (306, 60))), "", object_id="#break_up_button")
+        self.toggle_mate = UIButton(scale(pygame.Rect((646, 620), (306, 60))), "", object_id="#break_up_button")
 
         self.update_cat_list()
 
@@ -1572,7 +1573,7 @@ class ChooseMateScreen(Screens):
         self.update_cat_list()
 
         self.toggle_mate.kill()
-        self.toggle_mate = UIImageButton(scale(pygame.Rect((646, 620), (306, 60))), "",
+        self.toggle_mate = UIButton(scale(pygame.Rect((646, 620), (306, 60))), "",
                                          object_id="#confirm_mate_button")
 
         self.update_buttons()
@@ -1825,11 +1826,11 @@ class RelationshipScreen(Screens):
 
     def screen_switches(self):
 
-        self.previous_cat_button = UIImageButton(scale(pygame.Rect((50, 50), (306, 60))), "",
+        self.previous_cat_button = UIButton(scale(pygame.Rect((50, 50), (306, 60))), "",
                                                  object_id="#previous_cat_button")
-        self.next_cat_button = UIImageButton(scale(pygame.Rect((1244, 50), (306, 60))), "",
+        self.next_cat_button = UIButton(scale(pygame.Rect((1244, 50), (306, 60))), "",
                                              object_id="#next_cat_button")
-        self.back_button = UIImageButton(scale(pygame.Rect((50, 1290), (210, 60))), "", object_id="#back_button")
+        self.back_button = UIButton(scale(pygame.Rect((50, 1290), (210, 60))), "", object_id="#back_button")
 
         self.search_bar = pygame_gui.elements.UITextEntryLine(scale(pygame.Rect((1220, 194), (290, 46))),
                                                               object_id="#search_entry_box")
@@ -1850,10 +1851,10 @@ class RelationshipScreen(Screens):
         self.page_number = pygame_gui.elements.UITextBox("", scale(pygame.Rect((890, 1234), (300, 68))),
                                                          object_id=get_text_box_theme("#text_box_30_horizcenter"))
 
-        self.switch_focus_button = UIImageButton(scale(pygame.Rect((170, 780), (272, 60))), "",
+        self.switch_focus_button = UIButton(scale(pygame.Rect((170, 780), (272, 60))), "",
                                                  object_id="#switch_focus_button")
         self.switch_focus_button.disable()
-        self.view_profile_button = UIImageButton(scale(pygame.Rect((170, 840), (272, 60))), "",
+        self.view_profile_button = UIButton(scale(pygame.Rect((170, 840), (272, 60))), "",
                                                  object_id="#view_profile_button")
         self.view_profile_button.disable()
 
@@ -2587,7 +2588,7 @@ class MediationScreen(Screens):
         else:
             self.selected_mediator = None
 
-        self.back_button = UIImageButton(scale(pygame.Rect((50, 50), (210, 60))), "", object_id="#back_button")
+        self.back_button = UIButton(scale(pygame.Rect((50, 50), (210, 60))), "", object_id="#back_button")
 
         self.selected_frame_1 = pygame_gui.elements.UIImage(scale(pygame.Rect((100, 160), (400, 700))),
                                                             pygame.transform.scale(
@@ -2621,23 +2622,23 @@ class MediationScreen(Screens):
                                                                       "#text_box_22_horizleft"),
                                                                   manager=MANAGER)
 
-        self.mediate_button = UIImageButton(scale(pygame.Rect((560, 700), (210, 60))), "",
+        self.mediate_button = UIButton(scale(pygame.Rect((560, 700), (210, 60))), "",
                                             object_id="#mediate_button",
                                             manager=MANAGER)
-        self.sabotoge_button = UIImageButton(scale(pygame.Rect((800, 700), (218, 60))), "",
+        self.sabotoge_button = UIButton(scale(pygame.Rect((800, 700), (218, 60))), "",
                                              object_id="#sabotage_button",
                                              manager=MANAGER)
 
-        self.next_med = UIImageButton(scale(pygame.Rect((952, 540), (68, 68))), "", object_id="#arrow_right_button")
-        self.last_med = UIImageButton(scale(pygame.Rect((560, 540), (68, 68))), "", object_id="#arrow_left_button")
+        self.next_med = UIButton(scale(pygame.Rect((952, 540), (68, 68))), "", object_id="#arrow_right_button")
+        self.last_med = UIButton(scale(pygame.Rect((560, 540), (68, 68))), "", object_id="#arrow_left_button")
 
         self.next_page = UIImageButton(scale(pygame.Rect((866, 1224), (68, 68))), "", object_id="#relation_list_next")
         self.previous_page = UIImageButton(scale(pygame.Rect((666, 1224), (68, 68))), "",
                                            object_id="#relation_list_previous")
 
-        self.deselect_1 = UIImageButton(scale(pygame.Rect((136, 868), (254, 60))), "",
+        self.deselect_1 = UIButton(scale(pygame.Rect((136, 868), (254, 60))), "",
                                         object_id="#remove_cat_button")
-        self.deselect_2 = UIImageButton(scale(pygame.Rect((1210, 868), (254, 60))), "",
+        self.deselect_2 = UIButton(scale(pygame.Rect((1210, 868), (254, 60))), "",
                                         object_id="#remove_cat_button")
 
         self.results = pygame_gui.elements.UITextBox("",
@@ -2651,8 +2652,8 @@ class MediationScreen(Screens):
                                                    object_id=get_text_box_theme("#text_box_22_horizcenter_spacing_95"),
                                                    manager=MANAGER)
 
-        self.random1 = UIImageButton(scale(pygame.Rect((396, 864), (68, 68))), "", object_id="#random_dice_button")
-        self.random2 = UIImageButton(scale(pygame.Rect((1136, 864), (68, 68))), "", object_id="#random_dice_button")
+        self.random1 = UIButton(scale(pygame.Rect((396, 864), (68, 68))), "", object_id="#random_dice_button")
+        self.random2 = UIButton(scale(pygame.Rect((1136, 864), (68, 68))), "", object_id="#random_dice_button")
 
         self.update_buttons()
         self.update_mediator_info()

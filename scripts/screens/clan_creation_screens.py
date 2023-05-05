@@ -11,6 +11,7 @@ from scripts.cat.names import names
 from re import sub
 from scripts.game_structure import image_cache
 from scripts.game_structure.image_button import UIImageButton, UISpriteButton
+from scripts.game_structure.ui_button import UIButton
 from scripts.game_structure.game_essentials import game, MANAGER
 from scripts.patrol import Patrol
 
@@ -100,7 +101,7 @@ class MakeClanScreen(Screens):
             scale(pygame.Rect((50, 50), (1200, -1))),
             object_id=get_text_box_theme("#text_box_22_horizleft"), manager=MANAGER
         )
-        self.main_menu = UIImageButton(scale(pygame.Rect((50, 100), (306, 60))), "", object_id="#main_menu_button"
+        self.main_menu = UIButton(scale(pygame.Rect((50, 100), (306, 60))), "", object_id="#main_menu_button"
                                        , manager=MANAGER)
         create_example_cats()
         # self.worldseed = randrange(10000)
@@ -753,7 +754,7 @@ class MakeClanScreen(Screens):
         )
 
         # Create all the elements.
-        self.elements['classic_mode_button'] = UIImageButton(scale(pygame.Rect((218, 480), (264, 60))), "",
+        self.elements['classic_mode_button'] = UIButton(scale(pygame.Rect((218, 480), (264, 60))), "",
                                                              object_id="#classic_mode_button",
                                                              manager=MANAGER)
         self.elements['expanded_mode_button'] = UIImageButton(scale(pygame.Rect((188, 640), (324, 68))), "",
@@ -762,11 +763,11 @@ class MakeClanScreen(Screens):
         self.elements['cruel_mode_button'] = UIImageButton(scale(pygame.Rect((200, 800), (300, 60))), "",
                                                            object_id="#cruel_mode_button",
                                                            manager=MANAGER)
-        self.elements['previous_step'] = UIImageButton(scale(pygame.Rect((506, 1240), (294, 60))), "",
+        self.elements['previous_step'] = UIButton(scale(pygame.Rect((506, 1240), (294, 60))), "",
                                                        object_id="#previous_step_button",
                                                        manager=MANAGER)
         self.elements['previous_step'].disable()
-        self.elements['next_step'] = UIImageButton(scale(pygame.Rect((800, 1240), (294, 60))), "",
+        self.elements['next_step'] = UIButton(scale(pygame.Rect((800, 1240), (294, 60))), "",
                                                    object_id="#next_step_button",
                                                    manager=MANAGER)
         self.elements['mode_details'] = pygame_gui.elements.UITextBox("", scale(pygame.Rect((650, 320), (810, 922))),
@@ -789,7 +790,7 @@ class MakeClanScreen(Screens):
                                                                                          (1600, 1400))
                                                                   , manager=MANAGER)
         self.elements['background'].disable()
-        self.elements["random"] = UIImageButton(scale(pygame.Rect((448, 1190), (68, 68))), "",
+        self.elements["random"] = UIButton(scale(pygame.Rect((448, 1190), (68, 68))), "",
                                                 object_id="#random_dice_button"
                                                 , manager=MANAGER)
 
@@ -797,9 +798,9 @@ class MakeClanScreen(Screens):
                                                                manager=MANAGER,
                                                                object_id="#default_dark", visible=False)
 
-        self.elements['previous_step'] = UIImageButton(scale(pygame.Rect((506, 1270), (294, 60))), "",
+        self.elements['previous_step'] = UIButton(scale(pygame.Rect((506, 1270), (294, 60))), "",
                                                        object_id="#previous_step_button", manager=MANAGER)
-        self.elements['next_step'] = UIImageButton(scale(pygame.Rect((800, 1270), (294, 60))), "",
+        self.elements['next_step'] = UIButton(scale(pygame.Rect((800, 1270), (294, 60))), "",
                                                    object_id="#next_step_button", manager=MANAGER)
         self.elements['next_step'].disable()
         self.elements["name_entry"] = pygame_gui.elements.UITextEntryLine(scale(pygame.Rect((530, 1195), (280, 58)))
@@ -811,7 +812,7 @@ class MakeClanScreen(Screens):
                                                               scale(pygame.Rect((750, 1200), (200, 50))),
                                                               object_id="#text_box_30_horizcenter_light",
                                                               manager=MANAGER)
-        self.elements["reset_name"] = UIImageButton(scale(pygame.Rect((910, 1190), (268, 60))), "",
+        self.elements["reset_name"] = UIButton(scale(pygame.Rect((910, 1190), (268, 60))), "",
                                                     object_id="#reset_name_button", manager=MANAGER)
 
     def clan_name_header(self):
@@ -836,19 +837,19 @@ class MakeClanScreen(Screens):
         # Roll_buttons
         x_pos = 310
         y_pos = 470
-        self.elements['roll1'] = UIImageButton(scale(pygame.Rect((x_pos, y_pos), (68, 68))), "",
+        self.elements['roll1'] = UIButton(scale(pygame.Rect((x_pos, y_pos), (68, 68))), "",
                                                object_id="#random_dice_button", manager=MANAGER)
         y_pos += 80
-        self.elements['roll2'] = UIImageButton(scale(pygame.Rect((x_pos, y_pos), (68, 68))), "",
+        self.elements['roll2'] = UIButton(scale(pygame.Rect((x_pos, y_pos), (68, 68))), "",
                                                object_id="#random_dice_button", manager=MANAGER)
         y_pos += 80
-        self.elements['roll3'] = UIImageButton(scale(pygame.Rect((x_pos, y_pos), (68, 68))), "",
+        self.elements['roll3'] = UIButton(scale(pygame.Rect((x_pos, y_pos), (68, 68))), "",
                                                object_id="#random_dice_button", manager=MANAGER)
 
         _tmp = 160
         if self.rolls_left == -1:
             _tmp += 5
-        self.elements['dice'] = UIImageButton(scale(pygame.Rect((_tmp, 870), (68, 68))), "",
+        self.elements['dice'] = UIButton(scale(pygame.Rect((_tmp, 870), (68, 68))), "",
                                               object_id="#random_dice_button", manager=MANAGER)
         del _tmp
         self.elements['reroll_count'] = pygame_gui.elements.UILabel(scale(pygame.Rect((200, 880), (100, 50))),
@@ -897,9 +898,9 @@ class MakeClanScreen(Screens):
             manager=MANAGER)
 
         # Next and previous buttons
-        self.elements['previous_step'] = UIImageButton(scale(pygame.Rect((506, 800), (294, 60))), "",
+        self.elements['previous_step'] = UIButton(scale(pygame.Rect((506, 800), (294, 60))), "",
                                                        object_id="#previous_step_button", manager=MANAGER)
-        self.elements['next_step'] = UIImageButton(scale(pygame.Rect((800, 800), (294, 60))), "",
+        self.elements['next_step'] = UIButton(scale(pygame.Rect((800, 800), (294, 60))), "",
                                                    object_id="#next_step_button", manager=MANAGER)
         self.elements['next_step'].disable()
 
@@ -939,9 +940,9 @@ class MakeClanScreen(Screens):
             manager=MANAGER)
 
         # Next and previous buttons
-        self.elements['previous_step'] = UIImageButton(scale(pygame.Rect((506, 800), (294, 60))), "",
+        self.elements['previous_step'] = UIButton(scale(pygame.Rect((506, 800), (294, 60))), "",
                                                        object_id="#previous_step_button", manager=MANAGER)
-        self.elements['next_step'] = UIImageButton(scale(pygame.Rect((800, 800), (294, 60))), "",
+        self.elements['next_step'] = UIButton(scale(pygame.Rect((800, 800), (294, 60))), "",
                                                    object_id="#next_step_button", manager=MANAGER)
         self.elements['next_step'].disable()
 
@@ -985,9 +986,9 @@ class MakeClanScreen(Screens):
             manager=MANAGER)
 
         # Next and previous buttons
-        self.elements['previous_step'] = UIImageButton(scale(pygame.Rect((506, 800), (294, 60))), "",
+        self.elements['previous_step'] = UIButton(scale(pygame.Rect((506, 800), (294, 60))), "",
                                                        object_id="#previous_step_button", manager=MANAGER)
-        self.elements['next_step'] = UIImageButton(scale(pygame.Rect((800, 800), (294, 60))), "",
+        self.elements['next_step'] = UIButton(scale(pygame.Rect((800, 800), (294, 60))), "",
                                                    object_id="#next_step_button", manager=MANAGER)
         self.elements['next_step'].disable()
 
@@ -1019,16 +1020,16 @@ class MakeClanScreen(Screens):
                                                                       "#text_box_30_horizcenter"),
                                                                   manager=MANAGER)
 
-        self.elements['select_cat'] = UIImageButton(scale(pygame.Rect((706, 720), (190, 60))),
+        self.elements['select_cat'] = UIButton(scale(pygame.Rect((706, 720), (190, 60))),
                                                     "",
                                                     object_id="#recruit_button",
                                                     visible=False,
                                                     manager=MANAGER)
 
         # Next and previous buttons
-        self.elements['previous_step'] = UIImageButton(scale(pygame.Rect((506, 800), (294, 60))), "",
+        self.elements['previous_step'] = UIButton(scale(pygame.Rect((506, 800), (294, 60))), "",
                                                        object_id="#previous_step_button", manager=MANAGER)
-        self.elements['next_step'] = UIImageButton(scale(pygame.Rect((800, 800), (294, 60))), "",
+        self.elements['next_step'] = UIButton(scale(pygame.Rect((800, 800), (294, 60))), "",
                                                    object_id="#next_step_button", manager=MANAGER)
         self.elements['next_step'].disable()
 
@@ -1044,9 +1045,9 @@ class MakeClanScreen(Screens):
         self.clear_all_page()
         self.sub_screen = 'choose camp'
 
-        self.elements['previous_step'] = UIImageButton(scale(pygame.Rect((506, 1290), (294, 60))), "",
+        self.elements['previous_step'] = UIButton(scale(pygame.Rect((506, 1290), (294, 60))), "",
                                                        object_id="#previous_step_button", manager=MANAGER)
-        self.elements["done_button"] = UIImageButton(scale(pygame.Rect((800, 1290), (294, 60))), "",
+        self.elements["done_button"] = UIButton(scale(pygame.Rect((800, 1290), (294, 60))), "",
                                                      object_id="#done_arrow_button", manager=MANAGER)
         self.elements['done_button'].disable()
 
@@ -1093,7 +1094,7 @@ class MakeClanScreen(Screens):
                                                   tool_tip_text='Switch starting season to Leaf-bare.'
                                                   )
         # Random background
-        self.elements["random_background"] = UIImageButton(scale(pygame.Rect((510, 1190), (580, 60))), "",
+        self.elements["random_background"] = UIButton(scale(pygame.Rect((510, 1190), (580, 60))), "",
                                                            object_id="#random_background_button", manager=MANAGER)
 
         # art frame
@@ -1114,7 +1115,7 @@ class MakeClanScreen(Screens):
                                                                     pygame.transform.scale(
                                                                         game.clan.leader.sprite,
                                                                         (200, 200)), manager=MANAGER)
-        self.elements["continue"] = UIImageButton(scale(pygame.Rect((692, 500), (204, 60))), "",
+        self.elements["continue"] = UIButton(scale(pygame.Rect((692, 500), (204, 60))), "",
                                                   object_id="#continue_button_small")
         self.elements["save_confirm"] = pygame_gui.elements.UITextBox('Your Clan has been created and saved!',
                                                                       scale(pygame.Rect((200, 140), (1200, 60))),
