@@ -33,6 +33,7 @@ class UIImageButton(pygame_gui.elements.UIButton):
             normal_image = None
         finally:
             if normal_image != self.normal_image:
+                self.ui_theme.load_theme("resources/buttons.json")
                 self.normal_image = normal_image
                 self.hovered_image = normal_image
                 self.selected_image = normal_image
@@ -41,7 +42,7 @@ class UIImageButton(pygame_gui.elements.UIButton):
 
         hovered_image = None
         try:
-            hovered_image = self.ui_theme.get_image('hovered_image', self.combined_element_ids)
+            hovered_image = get_image('hovered_image', self.combined_element_ids)
             hovered_image = pygame.transform.scale(hovered_image, self.relative_rect.size)  # auto-rescale the image
         except LookupError:
             hovered_image = self.normal_image
@@ -52,7 +53,7 @@ class UIImageButton(pygame_gui.elements.UIButton):
 
         selected_image = None
         try:
-            selected_image = self.ui_theme.get_image('selected_image', self.combined_element_ids)
+            selected_image = get_image('selected_image', self.combined_element_ids)
             selected_image = pygame.transform.scale(selected_image, self.relative_rect.size)  # auto-rescale the image
         except LookupError:
             selected_image = self.normal_image
@@ -63,7 +64,7 @@ class UIImageButton(pygame_gui.elements.UIButton):
 
         disabled_image = None
         try:
-            disabled_image = self.ui_theme.get_image('disabled_image', self.combined_element_ids)
+            disabled_image = get_image('disabled_image', self.combined_element_ids)
             disabled_image = pygame.transform.scale(disabled_image, self.relative_rect.size)  # auto-rescale the image
         except LookupError:
             disabled_image = self.normal_image
@@ -372,4 +373,3 @@ class IDImageButton(UIImageButton):
         # This button will auto-disable if no ids are entered.
         if not self.ids:
             self.disable()
-

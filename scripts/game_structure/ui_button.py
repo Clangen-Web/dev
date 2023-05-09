@@ -519,6 +519,14 @@ class CatButton(pygame_gui.elements.UIButton):
             )
         self.internal.image.set_image(pygame.transform.scale(sprite, self.relative_rect.size))
         super().on_unhovered()
+    def rebuild(self):
+        for key in ["normal_bg", "hovered_bg", "disabled_bg", "selected_bg", "active_bg", 
+                    "normal_text", "hovered_text", "selected_text", "disabled_text", 
+                    "link_text", "link_hover", "link_selected", "text_shadow", 
+                    "normal_border", "hovered_border", "disabled_border", "active_border", "selected_border", 
+                    "normal_text_shadow"]:
+            self.colours[key] = pygame.Color(0, 0, 0, 0) # yes i know this solution is hacky give me a BREAK
+        super().rebuild()
 
 if is_web:
     _Symbol.populate()
