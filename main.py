@@ -158,10 +158,6 @@ async def main():
     print("Version Name: ", VERSION_NAME)
     print("Running on commit " + get_version_info().version_number)
 
-
-
-
-
     # Load game
     from scripts.game_structure.load_cat import load_cats, version_convert
     from scripts.game_structure.windows import SaveCheck
@@ -245,7 +241,7 @@ async def main():
 
 
     while True:
-        time_delta = clock.tick(30) / 1000.0
+        time_delta = clock.tick(game.switches['fps']) / 1000.0
         if game.switches['cur_screen'] not in ['start screen']:
             if game.settings['dark mode']:
                 screen.fill((57, 50, 36))
