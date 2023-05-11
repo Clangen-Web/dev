@@ -9,6 +9,8 @@ from scripts.game_structure.game_essentials import MANAGER, game
 
 from scripts.utility import get_text_box_theme
 
+from scripts.platformwrapper import is_web
+
 class debugConsole(pygame_gui.windows.UIConsoleWindow):
     def __init__(self, rect, manager, debug_class):
         self.debug_class = debug_class
@@ -16,8 +18,9 @@ class debugConsole(pygame_gui.windows.UIConsoleWindow):
         super().__init__(rect, manager, window_title="Debug Console", object_id="#debug_console", visible=0)
 
         # Force it to print help txt
-        ev = pygame.event.Event(pygame_gui.UI_CONSOLE_COMMAND_ENTERED, {"command": "help"})
-        self.process_event(ev)
+        if not is_web:
+            ev = pygame.event.Event(pygame_gui.UI_CONSOLE_COMMAND_ENTERED, {"command": "help"})
+            self.process_event(ev)
 
     def add_multiple_lines_to_log(self, lines: str):
         """Function to add multiple lines from a mutliline string to the log. 
