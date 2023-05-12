@@ -87,6 +87,8 @@ async def main():
 
             web.pushdb()
             print("Migration complete!")
+        
+        web.freeMemory()
     
     setup_data_dir()
     timestr = time.strftime("%Y%m%d_%H%M%S")
