@@ -352,6 +352,8 @@ class ButtonCache():
         Returns:
             pygame.Surface: The stored surface, just to make calls easier for me
         """
+        if is_web:
+            return surface
         store = {
             "surface": surface,
             "hover": hover,
