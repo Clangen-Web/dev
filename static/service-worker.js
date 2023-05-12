@@ -1,25 +1,11 @@
-// Based off of https://github.com/pwa-builder/PWABuilder/blob/main/docs/sw.js
+const CONFIG = {
+  ENABLE_CACHE: false,
+  HOSTNAME_WHITELIST: [
+    self.location.hostname,
+    "pygame-web.github.io",
+  ]
+}
 
-/*
-      Welcome to our basic Service Worker! This Service Worker offers a basic offline experience
-      while also being easily customizeable. You can add in your own code to implement the capabilities
-      listed below, or change anything else you would like.
-
-
-      Need an introduction to Service Workers? Check our docs here: https://docs.pwabuilder.com/#/home/sw-intro
-      Want to learn more about how our Service Worker generation works? Check our docs here: https://docs.pwabuilder.com/#/studio/existing-app?id=add-a-service-worker
-
-      Did you know that Service Workers offer many more capabilities than just offline?
-        - Background Sync: https://microsoft.github.io/win-student-devs/#/30DaysOfPWA/advanced-capabilities/06
-        - Periodic Background Sync: https://web.dev/periodic-background-sync/
-        - Push Notifications: https://microsoft.github.io/win-student-devs/#/30DaysOfPWA/advanced-capabilities/07?id=push-notifications-on-the-web
-        - Badges: https://microsoft.github.io/win-student-devs/#/30DaysOfPWA/advanced-capabilities/07?id=application-badges
-    */
-
-const HOSTNAME_WHITELIST = [
-  self.location.hostname,
-  "pygame-web.github.io",
-];
 
 // The Util Function to hack URLs of intercepted requests
 const getFixedUrl = (req) => {
@@ -54,12 +40,15 @@ self.addEventListener("activate", (event) => {
   console.log("[SW] activate");
   event.waitUntil(self.clients.claim());
 
-  console.log('[SW] attempting to cache main.wasm')
-  caches.open("pwa-cache").then((cache) => {
-    cache.addAll([
-      'https://pygame-web.github.io/archives/0.7/python311/main.wasm'
-    ]);
-  })
+  console.log(`[SW] Caching ${CONFIG.ENABLE_CACHE ? 'enabled' : 'disabled'}`)
+  if (CONFIG.ENABLE_CACHE) {
+    console.log('[SW] attempting to cache main.wasm')
+    caches.open("pwa-cache").then((cache) => {
+      cache.addAll([
+        'https://pygame-web.github.io/archives/0.7/python311/main.wasm'
+      ]);
+    })
+  }
 });
 
 /**
@@ -69,9 +58,10 @@ self.addEventListener("activate", (event) => {
  *  void respondWith(Promise<Response> r)
  */
 self.addEventListener("fetch", (event) => {
+  if (!CONFIG.ENABLE_CACHE) return;
   console.log("[SW] fetch " + event.request.url);
   // Skip some of cross-origin requests, like those for Google Analytics.
-  if (HOSTNAME_WHITELIST.indexOf(new URL(event.request.url).hostname) > -1) {
+  if (config.HOSTNAME_WHITELIST.indexOf(new URL(event.request.url).hostname) > -1) {
     console.log("[SW] whitelisted");
     // Stale-while-revalidate
     // similar to HTTP's stale-while-revalidate: https://www.mnot.net/blog/2007/12/12/stale
