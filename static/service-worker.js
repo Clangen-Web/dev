@@ -1,7 +1,7 @@
 const CONFIG = {
-  ENABLE_CACHE: false,
+  ENABLE_CACHE: true,
   HOSTNAME_WHITELIST: [
-    self.location.hostname,
+    // self.location.hostname,
     "pygame-web.github.io",
   ]
 }
