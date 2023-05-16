@@ -241,79 +241,82 @@ async def main():
 
 
 
-
-    while True:
-        time_delta = clock.tick(game.switches['fps']) / 1000.0
-        if game.switches['cur_screen'] not in ['start screen']:
-            if game.settings['dark mode']:
-                screen.fill((57, 50, 36))
-            else:
-                screen.fill((206, 194, 168))
-
-        if game.settings['custom cursor']:
-            if pygame.mouse.get_cursor() == disabled_cursor:
-                pygame.mouse.set_cursor(cursor)
-        elif pygame.mouse.get_cursor() == cursor:
-            pygame.mouse.set_cursor(disabled_cursor)
-        # Draw screens
-        # This occurs before events are handled to stop pygame_gui buttons from blinking.
-        game.all_screens[game.current_screen].on_use()
-
-        # EVENTS
-        for event in pygame.event.get():
-            game.all_screens[game.current_screen].handle_event(event)
-
-            if event.type == pygame.QUIT:
-                # Dont display if on the start screen or there is no clan.
-                if (game.switches['cur_screen'] in ['start screen',
-                                                    'switch clan screen',
-                                                    'settings screen',
-                                                    'info screen',
-                                                    'make clan screen']
-                    or not game.clan):
-                    quit(savesettings=False)
+    try:
+        while True:
+            time_delta = clock.tick(game.switches['fps']) / 1000.0
+            if game.switches['cur_screen'] not in ['start screen']:
+                if game.settings['dark mode']:
+                    screen.fill((57, 50, 36))
                 else:
-                    SaveCheck(game.switches['cur_screen'], False, None)
+                    screen.fill((206, 194, 168))
 
+            if game.settings['custom cursor']:
+                if pygame.mouse.get_cursor() == disabled_cursor:
+                    pygame.mouse.set_cursor(cursor)
+            elif pygame.mouse.get_cursor() == cursor:
+                pygame.mouse.set_cursor(disabled_cursor)
+            # Draw screens
+            # This occurs before events are handled to stop pygame_gui buttons from blinking.
+            game.all_screens[game.current_screen].on_use()
 
-            # MOUSE CLICK
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                game.clicked = True
+            # EVENTS
+            for event in pygame.event.get():
+                game.all_screens[game.current_screen].handle_event(event)
 
-                if MANAGER.visual_debug_active:
-                    _ = pygame.mouse.get_pos()
-                    if game.settings['fullscreen']:
-                        print(f"(x: {_[0]}, y: {_[1]})")
+                if event.type == pygame.QUIT:
+                    # Dont display if on the start screen or there is no clan.
+                    if (game.switches['cur_screen'] in ['start screen',
+                                                        'switch clan screen',
+                                                        'settings screen',
+                                                        'info screen',
+                                                        'make clan screen']
+                        or not game.clan):
+                        quit(savesettings=False)
                     else:
-                        print(f"(x: {_[0]*2}, y: {_[1]*2})")
-                    del _
+                        SaveCheck(game.switches['cur_screen'], False, None)
 
-            # F2 turns toggles visual debug mode for pygame_gui, allowed for easier bug fixes.
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_F2:
-                    debugmode.toggle_console()
 
-            MANAGER.process_events(event)
+                # MOUSE CLICK
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    game.clicked = True
+
+                    if MANAGER.visual_debug_active:
+                        _ = pygame.mouse.get_pos()
+                        if game.settings['fullscreen']:
+                            print(f"(x: {_[0]}, y: {_[1]})")
+                        else:
+                            print(f"(x: {_[0]*2}, y: {_[1]*2})")
+                        del _
+
+                # F2 turns toggles visual debug mode for pygame_gui, allowed for easier bug fixes.
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_F2:
+                        debugmode.toggle_console()
+
+                MANAGER.process_events(event)
+            
+
+            MANAGER.update(time_delta)
+
+            # update
+            game.update_game()
+            if game.switch_screens:
+                game.all_screens[game.last_screen_forupdate].exit_screen()
+                game.all_screens[game.current_screen].screen_switches()
+                game.switch_screens = False
+
+
+            debugmode.update1(clock)
+            # END FRAME
+            MANAGER.draw_ui(screen)
+            debugmode.update2(screen)
+
+
+            pygame.display.update()
         
-
-        MANAGER.update(time_delta)
-
-        # update
-        game.update_game()
-        if game.switch_screens:
-            game.all_screens[game.last_screen_forupdate].exit_screen()
-            game.all_screens[game.current_screen].screen_switches()
-            game.switch_screens = False
-
-
-        debugmode.update1(clock)
-        # END FRAME
-        MANAGER.draw_ui(screen)
-        debugmode.update2(screen)
-
-
-        pygame.display.update()
-    
-        await asyncio.sleep(0)
+            await asyncio.sleep(0)
+    except Exception:
+        if web.is_web:
+            web.eval("if (confirm('An error has occurred. Would you like to open the console?')) debug()")
 
 asyncio.run(main())
