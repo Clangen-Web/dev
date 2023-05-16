@@ -62,7 +62,7 @@ async def custom_site():
     import embed
 
 
-    platform.document.body.style.background = "#7f7f7f"
+    platform.document.body.style.background = "#cec2a8"
 
     import pygame
 
@@ -157,9 +157,9 @@ async def custom_site():
     def ui_callback(pkg, error=None):
         nonlocal fnt
         if error:
-            prompt = fnt.render(f"{error}", True, "black")
+            prompt = fnt.render(f"{error}", False, (0, 0, 0))
         else:
-            prompt = fnt.render(f"Setting [{pkg}] up", True, "black")
+            prompt = fnt.render(f"Setting [{pkg}] up", False, (0, 0, 0))
         pg_bar(track.len)
         screen.blit(prompt, ( marginx+ ux(80), marginy - uy(10) ) )
         compose()
@@ -169,7 +169,7 @@ async def custom_site():
 
         # now make a prompt
         fnt = pygame.sysfont.SysFont("freesans",  uy(80) )
-        prompt = fnt.render("Ready to start !", True, "blue")
+        prompt = fnt.render("Ready to start !", False, (0, 0, 0))
         pg_bar(track.len)
         screen.blit(prompt, ( marginx+ ux(80), marginy - uy(10) ) )
         compose()
@@ -314,7 +314,7 @@ config = {
             font-family: arial;
             margin: 0;
             padding: none;
-            background-color:powderblue;
+            background-color: #cec2a8;
         }
 
         .topright{
