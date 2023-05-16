@@ -61,7 +61,7 @@ self.addEventListener("fetch", (event) => {
   if (!CONFIG.ENABLE_CACHE) return;
   console.log("[SW] fetch " + event.request.url);
   // Skip some of cross-origin requests, like those for Google Analytics.
-  if (config.HOSTNAME_WHITELIST.indexOf(new URL(event.request.url).hostname) > -1) {
+  if (CONFIG.HOSTNAME_WHITELIST.indexOf(new URL(event.request.url).hostname) > -1) {
     console.log("[SW] whitelisted");
     // Stale-while-revalidate
     // similar to HTTP's stale-while-revalidate: https://www.mnot.net/blog/2007/12/12/stale
