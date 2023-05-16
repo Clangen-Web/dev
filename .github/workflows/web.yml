@@ -21,11 +21,18 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     
     steps:
-    - uses: actions/checkout@v2
-    - name: Checkout
+    - name: Chxeckout
+      uses: actions/checkout@v2
+    - name: Setup Python
+      run: python3 -m pip install pygbag
+    - name: Write version file
       run: |
-            python3 -m pip install pygbag
-            python3 -m pygbag --ume_block 0 --template index.html --build $GITHUB_WORKSPACE/main.py
+        echo "[DEFAULT]" > version.ini
+        echo "version_number=${{ github.sha }}" >> version.ini
+        echo "release_channel=web" >> version.ini
+        echo "upstream=${{ github.repository }}" >> version.ini
+    - name: Build
+      run: python3 -m pygbag --ume_block 0 --template index.html --build $GITHUB_WORKSPACE/main.py
     - name: Setup Pages
       uses: actions/configure-pages@v3
     - name: Upload artifact

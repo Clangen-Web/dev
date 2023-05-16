@@ -54,6 +54,7 @@ def freeMemory():
     whitelisted_files = [
         'main.py',
         'changelog.txt',
+        'version.ini',
         'sprites',
         'scripts',
         'resources',

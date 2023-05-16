@@ -23,12 +23,9 @@ def get_version_info():
         is_itch = False
         is_sandboxed = False
 
-        if not getattr(sys, 'frozen', False):
+        if not getattr(sys, 'frozen', False) and not web.is_web:
             is_source_build = True
 
-        if web.is_web:
-            get_version_info.instance = VersionInfo(True, 'web', 'web', 'web', False, True)
-            return get_version_info.instance
         elif os.path.exists("version.ini"):
             version_ini = ConfigParser()
             version_ini.read("version.ini", encoding="utf-8")
@@ -44,7 +41,7 @@ def get_version_info():
         if "--launched-through-itch" in sys.argv or "LAUNCHED_THROUGH_ITCH" in os.environ:
             is_itch = True
 
-        if "itch-player" in user_data_dir().lower():
+        if not web.is_web and "itch-player" in user_data_dir().lower():
             is_sandboxed = True
 
         get_version_info.instance = VersionInfo(is_source_build, release_channel, version_number, upstream, is_itch, is_sandboxed)

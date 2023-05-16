@@ -17,7 +17,7 @@ def setup_data_dir():
 
     # Windows requires elevated permissions to create symlinks.
     # The OpenDataDirectory.bat can be used instead as "shortcut".
-    if platform.system() != 'Windows':
+    if platform.system() != 'Windows' and not web.is_web:
         if os.path.exists('game_data'):
             os.remove('game_data')
         if not get_version_info().is_source_build:
