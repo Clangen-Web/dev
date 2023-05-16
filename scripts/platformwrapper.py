@@ -64,10 +64,10 @@ def freeMemory():
     for file in os.listdir('/tmp'):
         os.remove('/tmp/' + file)
     
-    for file in os.listdir('/data/data/clangen/assets'):
+    for file in os.listdir('.'):
         if file in whitelisted_files:
             continue
-        if os.path.isdir('/data/data/clangen/assets/' + file):
-            shutil.rmtree('/data/data/clangen/assets/' + file)
+        if os.path.isdir(file):
+            shutil.rmtree(file)
         else:
-            os.remove('/data/data/clangen/assets/' + file)
+            os.remove(file)
