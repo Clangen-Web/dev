@@ -221,7 +221,13 @@ async def main():
             (800 - version_number.get_relative_rect()[2] - 8,
             700 - version_number.get_relative_rect()[3]))
 
-    if get_version_info().is_source_build or get_version_info().is_dev():
+    if web.is_web:
+        dev_watermark = pygame_gui.elements.UILabel(
+            scale(pygame.Rect((1050, 1321), (600, 100))),
+            "Web Build:",
+            object_id="#dev_watermark"
+        )
+    elif get_version_info().is_source_build or get_version_info().is_dev():
         dev_watermark = pygame_gui.elements.UILabel(
             scale(pygame.Rect((1050, 1321), (600, 100))),
             "Dev Build:",
