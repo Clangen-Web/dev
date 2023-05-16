@@ -317,6 +317,11 @@ async def main():
             await asyncio.sleep(0)
     except Exception:
         if web.is_web:
-            web.eval("if (confirm('An error has occurred. Would you like to open the console?')) debug()")
+            web.eval("""
+            if (confirm('An error has occurred. Would you like to open the console?')) {
+                debug();
+            else {
+                window.location.reload();
+            }""")
 
 asyncio.run(main())
